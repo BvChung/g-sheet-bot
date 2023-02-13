@@ -6,6 +6,7 @@ from discord.ext import commands, tasks
 
 load_dotenv()
 token = os.getenv('TOKEN')
+test_channel = int(os.getenv('TEST_CHANNEL'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -34,7 +35,7 @@ class MyClient(discord.Client):
     
     @tasks.loop(seconds=10)
     async def my_background_task(self):
-        channel = self.get_channel(1074506528419221646)
+        channel = self.get_channel(test_channel)
         self.counter += 1
         print(self.counter)
         await channel.send(self.counter)
