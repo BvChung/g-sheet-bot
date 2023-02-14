@@ -1,12 +1,12 @@
 import discord
-import os
-from dotenv import load_dotenv
 from discord import app_commands
 from discord.ext import commands, tasks
+import gspread
+import config
 
-load_dotenv()
-token = os.getenv('TOKEN')
-test_channel = int(os.getenv('TEST_CHANNEL'))
+# gc = gspread.service_account_from_dict(config.credentials)
+# leetcodeSheet = gc.open(config.sheetName)
+# print(leetcodeSheet.sheet1.get_all_records())
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -35,7 +35,7 @@ class MyClient(discord.Client):
     
     @tasks.loop(seconds=10)
     async def my_background_task(self):
-        channel = self.get_channel(test_channel)
+        channel = self.get_channel(config.test_channel)
         self.counter += 1
         print(self.counter)
         await channel.send(self.counter)
@@ -44,5 +44,5 @@ class MyClient(discord.Client):
     async def before_my_task(self):
         await self.wait_until_ready()
     
-client = MyClient(intents=intents)
-client.run(token)
+# client = MyClient(intents=intents)
+# client.run(config.token)
