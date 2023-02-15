@@ -14,4 +14,5 @@ credentials = {
   "auth_provider_x509_cert_url": os.getenv('AUTH_PROVIDER_X509_CERT_URL'),
   "client_x509_cert_url": os.getenv('CLIENT_X509_CERT_URL')
 }
+secretJSON = os.getenv("SECRET_JSON")
 sheetName = os.getenv("SHEET_NAME")
