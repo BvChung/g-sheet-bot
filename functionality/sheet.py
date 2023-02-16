@@ -10,7 +10,7 @@ Column_Headers = ['Number', 'Name', 'Category', 'Solution', 'Link', 'Review']
 # print(leetcodeSheet.sheet1.get_all_records())
 # print(leetcodeSheet.sheet1.row_values(2))
 
-class GSheet:
+class Sheet:
     instance = None
 
     def __init__(self, credentials, sheetName) -> None:
@@ -18,10 +18,10 @@ class GSheet:
         self.cacheData = []
     
     @staticmethod
-    def getGSheetState():
-        if not GSheet.instance:
-            GSheet.instance = GSheet(config.credentials, config.sheetName)
-        return GSheet.instance
+    def getSheetState():
+        if not Sheet.instance:
+            Sheet.instance = Sheet(config.credentials, config.sheetName)
+        return Sheet.instance
     
     def getAllData(self)->list[dict]:
         return self.leetcodeSheet.get_all_records()
@@ -35,5 +35,9 @@ class GSheet:
 
         return filteredData
 
-
-        
+    def createEntry(self, entries: list[int & str]):
+        try:
+            self.leetcodeSheet.insert_row(entries)
+            self.leetcodeSheet.sort((1, 'asc'))
+        except:
+            print('Unable to add new entry')
