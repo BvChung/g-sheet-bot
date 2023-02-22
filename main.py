@@ -14,7 +14,9 @@ def main():
         try:
             data = gSheet.getAllData()
             # print(data)
-            await interaction.response.send_message(embed=embedFactory.createEmbed(data), ephemeral=True)
+            embed = embedFactory.defaultEmbed(data)
+            await interaction.followup.send_message(embed=embed, ephemeral=True)
+            await interaction.followup.send_message("Follow up", ephemeral=True)
         except:
             await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
     
@@ -28,7 +30,7 @@ def main():
                 await interaction.response.send_message('There are no entries with this category.')
                 return
 
-            embed = embedFactory.createCategoryEmbed(category, data)
+            embed = embedFactory.categoryEmbed(category, data)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except:
             await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
@@ -38,15 +40,26 @@ def main():
     async def sort(interaction: discord.Interaction):
         gSheet.sortSheet()
         await interaction.response.send_message('Sorted', ephemeral=True)
-    # @client.tree.command(description="Create new leetcode entry")
-    # @app_commands.describe(number="Problem number", name="Problem name", category="Problem category", solution="Your solution", link="Problem link", review="Review problem")
-    # async def newentry(interaction: discord.Interaction, number:app_commands.Range[int, 0, None], name: str,  category: Literal['Arrays', '2 Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D DP', '2D DP', 'Bit Manipulation', 'Math'], solution: str, link: str, review: Literal['yes', 'no']):
-    #     await interaction.response.send_modal(functionality.LeetcodeEntry())
 
     @client.tree.command(description="Create new leetcode entry")
     async def entry(interaction: discord.Interaction):
+        # interaction.response.
         await interaction.response.send_modal(functionality.LeetcodeEntry())
 
+    @client.tree.command(description="test view")
+    async def testview(interaction: discord.Interaction):
+        interaction.response.defer()
+        data = gSheet.getAllData()
+        currentPage = 1
+        currentIndex = 0
+        itemsPerPage = 5
+        pagination = functionality.PaginatedView(data, currentPage, currentIndex, itemsPerPage)
+        embed = embedFactory.paginatedEmbed(data, currentPage, currentIndex, itemsPerPage)
+        message = await interaction.channel.send(embed=embed, view=pagination)
+        await pagination.wait()
+        # print(f'Counter {pagination.counter}')
+        await message.delete()
+    
     client.run(config.token)
 
 if __name__ == "__main__":

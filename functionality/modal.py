@@ -64,6 +64,6 @@ class LeetcodeEntry(discord.ui.Modal, title="Leetcode Information Entry"):
         await interaction.response.send_message('Created new entry. ✅', ephemeral=True)
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-        await interaction.response.send_message(f'{error}. ❌', ephemeral=True)
+        await interaction.response.send_message(f'Could not create new entry ❌.\n{error}.', ephemeral=True)
 
         traceback.print_tb(error.__traceback__)
