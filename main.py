@@ -23,22 +23,25 @@ def main():
     async def category(interaction: discord.Interaction, category: Literal['Arrays', '2-Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D-DP', '2D-DP', 'Bit Manipulation', 'Math']):
         try:
             data = gSheet.filterByCategory(category)
-            print(data)
+            
+            if not data:
+                await interaction.response.send_message('There are no entries with this category.')
+                return
+
             embed = embedFactory.createCategoryEmbed(category, data)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except:
             await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
 
     @client.tree.command(description="Create new leetcode entry")
-    @app_commands.describe(number="Problem number", name="Problem name", category="Problem category", solution="Your solution", link="Problem link", review="Review problem")
-    async def newentry(interaction: discord.Interaction, number:app_commands.Range[int, 0, None], name: str,  category: Literal['Arrays', '2 Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D DP', '2D DP', 'Bit Manipulation', 'Math'], solution: str, link: str, review: Literal['yes', 'no']):
-        try:
-            # data = gs.filterByCategory(category)
-            # print(data)
-            # embed = embedFactory.createCategoryEmbed(category, data)
-            await interaction.response.send_message("Success", ephemeral=True)
-        except:
-            await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
+    @app_commands.describe()
+    async def sort(interaction: discord.Interaction):
+        gSheet.sortSheet()
+        await interaction.response.send_message('Sorted', ephemeral=True)
+    # @client.tree.command(description="Create new leetcode entry")
+    # @app_commands.describe(number="Problem number", name="Problem name", category="Problem category", solution="Your solution", link="Problem link", review="Review problem")
+    # async def newentry(interaction: discord.Interaction, number:app_commands.Range[int, 0, None], name: str,  category: Literal['Arrays', '2 Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D DP', '2D DP', 'Bit Manipulation', 'Math'], solution: str, link: str, review: Literal['yes', 'no']):
+    #     await interaction.response.send_modal(functionality.LeetcodeEntry())
 
     @client.tree.command(description="Create new leetcode entry")
     async def entry(interaction: discord.Interaction):

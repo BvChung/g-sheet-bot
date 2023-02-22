@@ -35,9 +35,18 @@ class Sheet:
 
         return filteredData
 
-    def createEntry(self, entries: list[int & str]):
+    def createEntry(self, entries: list):
         try:
-            self.leetcodeSheet.insert_row(entries)
+            self.leetcodeSheet.insert_row(entries, 2)
             self.leetcodeSheet.sort((1, 'asc'))
         except:
             print('Unable to add new entry')
+    
+    def sortSheet(self):
+        try:
+            newRow = [69, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
+
+            self.leetcodeSheet.insert_row(newRow, 2)
+            self.leetcodeSheet.sort((1, 'asc'))
+        except:
+            print('Could not sort sheet')
