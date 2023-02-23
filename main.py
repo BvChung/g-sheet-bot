@@ -2,22 +2,12 @@ import discord
 from discord import app_commands
 from typing import Literal
 import config
-from functionality import *
+from botFunctionality import *
 
 def main():
-    client = MyClient.getClientState()
+    client = MyClient(config.guildId)
     gSheet = Sheet.getSheetState()
     embedFactory = Embeds()
-
-    # @client.tree.command(description="Returns all data from spreadsheet")
-    # async def all(interaction: discord.Interaction):        
-    #     try:
-    #         data = gSheet.getAllData()
-    #         # print(data)
-    #         embed = embedFactory.defaultEmbed(data)
-    #         await interaction.response.send_message(embed=embed, ephemeral=True)
-    #     except:
-    #         await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
     
     @client.tree.command(description="Filter data by category")
     @app_commands.describe(category="Problem category")
@@ -35,29 +25,22 @@ def main():
             await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
 
     @client.tree.command(description="Create new leetcode entry")
-    @app_commands.describe()
-    async def sort(interaction: discord.Interaction):
-        gSheet.sortSheet()
-        await interaction.response.send_message('Sorted', ephemeral=True)
-
-    @client.tree.command(description="Create new leetcode entry")
     async def entry(interaction: discord.Interaction):
-        # interaction.response.
         await interaction.response.send_modal(LeetcodeEntry())
 
     @client.tree.command(description="test view")
     async def getall(interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
-        data = gSheet.getAllData()
-        currentPage = 1
-        currentIndex = 0
-        itemsPerPage = 5
-        pagination = PaginatedView(embedFactory, data, currentPage, currentIndex, itemsPerPage)
-        embed = embedFactory.paginatedEmbed(data, currentPage, currentIndex, itemsPerPage)
-        message = await interaction.channel.send(embed=embed, view=pagination)
-        await pagination.wait()
-        # print(f'Counter {pagination.counter}')
-        await message.delete()
+        try:
+            await interaction.response.send_message('Received data. ✅', ephemeral=True, delete_after=5)
+            data = gSheet.getAllData()
+            currentPage, currentIndex, itemsPerPage = 1, 0, 5
+            pagination = PaginatedView(gSheet, embedFactory, data, currentPage, currentIndex, itemsPerPage)
+            embed = embedFactory.paginatedEmbed(data, currentPage, currentIndex, itemsPerPage)
+            message = await interaction.channel.send(embed=embed, view=pagination)
+            await pagination.wait()
+            await message.delete()
+        except:
+            await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
     
     client.run(config.token)
 
