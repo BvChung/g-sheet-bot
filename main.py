@@ -2,23 +2,22 @@ import discord
 from discord import app_commands
 from typing import Literal
 import config
-import functionality
+from functionality import *
 
 def main():
-    client = functionality.MyClient.getClientState()
-    gSheet = functionality.Sheet.getSheetState()
-    embedFactory = functionality.Embeds()
+    client = MyClient.getClientState()
+    gSheet = Sheet.getSheetState()
+    embedFactory = Embeds()
 
-    @client.tree.command(description="Returns all data from spreadsheet")
-    async def all(interaction: discord.Interaction):        
-        try:
-            data = gSheet.getAllData()
-            # print(data)
-            embed = embedFactory.defaultEmbed(data)
-            await interaction.followup.send_message(embed=embed, ephemeral=True)
-            await interaction.followup.send_message("Follow up", ephemeral=True)
-        except:
-            await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
+    # @client.tree.command(description="Returns all data from spreadsheet")
+    # async def all(interaction: discord.Interaction):        
+    #     try:
+    #         data = gSheet.getAllData()
+    #         # print(data)
+    #         embed = embedFactory.defaultEmbed(data)
+    #         await interaction.response.send_message(embed=embed, ephemeral=True)
+    #     except:
+    #         await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True)
     
     @client.tree.command(description="Filter data by category")
     @app_commands.describe(category="Problem category")
@@ -44,16 +43,16 @@ def main():
     @client.tree.command(description="Create new leetcode entry")
     async def entry(interaction: discord.Interaction):
         # interaction.response.
-        await interaction.response.send_modal(functionality.LeetcodeEntry())
+        await interaction.response.send_modal(LeetcodeEntry())
 
     @client.tree.command(description="test view")
-    async def testview(interaction: discord.Interaction):
-        interaction.response.defer()
+    async def getall(interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
         data = gSheet.getAllData()
         currentPage = 1
         currentIndex = 0
         itemsPerPage = 5
-        pagination = functionality.PaginatedView(data, currentPage, currentIndex, itemsPerPage)
+        pagination = PaginatedView(embedFactory, data, currentPage, currentIndex, itemsPerPage)
         embed = embedFactory.paginatedEmbed(data, currentPage, currentIndex, itemsPerPage)
         message = await interaction.channel.send(embed=embed, view=pagination)
         await pagination.wait()

@@ -1,6 +1,5 @@
 import discord
 import traceback
-import functionality
 
 CATEGORIES = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries", "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
 REVIEW = ['yes', 'no']
@@ -44,7 +43,6 @@ class LeetcodeEntry(discord.ui.Modal, title="Leetcode Information Entry"):
     )
         
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        gSheet = functionality.Sheet.getSheetState()
         combinedInput = str(self.numberAndName)
 
         if combinedInput.find('-') == -1:
@@ -60,7 +58,7 @@ class LeetcodeEntry(discord.ui.Modal, title="Leetcode Information Entry"):
         if str(self.review).lower() not in REVIEW:
             raise Exception('Invalid review input')
 
-        gSheet.createEntry([number, name, str(self.category), str(self.solution), str(self.link), str(self.review).lower()])
+        self.gSheet.createEntry([number, name, str(self.category), str(self.solution), str(self.link), str(self.review).lower()])
         await interaction.response.send_message('Created new entry. ✅', ephemeral=True)
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:

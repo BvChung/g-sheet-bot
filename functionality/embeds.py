@@ -7,12 +7,14 @@ class Embeds:
     def defaultEmbed(self, data: list[dict]):
         embed = discord.Embed(title="All Problems", color=self.color)
         for row in data:
-            problem = str(row['Number']) + '. ' + row['Name'] + ' ' + '[' + row['Category'] + ']'
-            if (row['Review'] == 'yes'):
-                problem = '⭐ ' + problem
+            problem, solution, link = self.formatData(row, "default")
+            # print(problem, solution, link)
+            # problem = str(row['Number']) + '. ' + row['Name'] + ' ' + '[' + row['Category'] + ']'
+            # if (row['Review'] == 'yes'):
+            #     problem = '⭐ ' + problem
 
-            solution = 'Solution: ' + row['Solution']
-            link = 'Link: ' + row['Link']
+            # solution = 'Solution: ' + row['Solution']
+            # link = 'Link: ' + row['Link']
             output = f'{link}\n{solution}'
             embed.add_field(name=problem, value=output, inline=False)
 
@@ -32,9 +34,10 @@ class Embeds:
 
         return embed
     
-    def paginatedEmbed(self, data: list[dict], currentPage:int, currentIndex:int, itemsPerPage: int):
+    def paginatedEmbed(self, data: list[dict], currentPage:int, start:int, itemsPerPage: int):
         embed = discord.Embed(title="All Problems", color=self.color, description=f'Page {currentPage}')
-        for row in data[currentIndex:currentIndex + itemsPerPage]:
+        end = start + itemsPerPage
+        for row in data[start: end]:
             problem = str(row['Number']) + '. ' + row['Name'] + ' ' + '[' + row['Category'] + ']'
             if (row['Review'] == 'yes'):
                 problem = '⭐ ' + problem
@@ -45,4 +48,6 @@ class Embeds:
             embed.add_field(name=problem, value=output, inline=False)
 
         return embed
+    
+
     
