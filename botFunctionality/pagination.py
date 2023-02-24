@@ -1,13 +1,15 @@
 import discord
-from botFunctionality import *
+from abc import ABC, abstractmethod
+from .embeds import Embeds
+from .sheet import Sheet
 
-class PaginatedView(discord.ui.View):
-    
-    def __init__(self, gSheet: Sheet, embedFactory: Embeds, data: list[dict], currentPage: int, currentIndex:int, itemsPerPage: int):
+class PaginatedView(discord.ui.View, ABC):
+    def __init__(self, gSheet: Sheet, embedFactory: Embeds, data: list[dict], title:str, currentPage: int, currentIndex:int, itemsPerPage: int):
         super().__init__(timeout=200)
         self.gSheet = gSheet
         self.embedFactory = embedFactory
         self.data = data
+        self.title = title
         self.currentPage = currentPage
         self.currentIndex = currentIndex
         self.itemsPerPage = itemsPerPage
@@ -38,15 +40,19 @@ class PaginatedView(discord.ui.View):
     
     @discord.ui.button(label='🔃 Refresh', style=discord.ButtonStyle.blurple)
     async def refreshBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.data = self.gSheet.refetchData()
+        self.refreshData()
         self.currentPage = 1
         self.currentIndex = 0
         await self.updateView(interaction)
 
     async def updateView(self, interaction: discord.Interaction):
-        embed = self.embedFactory.paginatedEmbed(self.data, self.currentPage, self.currentIndex, self.itemsPerPage)
+        embed = self.embedFactory.createEmbed(self.data, self.title, self.currentPage, self.currentIndex, self.itemsPerPage)
         self.updateBtns()
         await interaction.response.edit_message(embed=embed, view=self)
+
+    @abstractmethod
+    def refreshData(self):
+        pass
 
     def updateBtns(self):
         if self.currentPage == 1:
@@ -71,3 +77,4 @@ class PaginatedView(discord.ui.View):
     def on_timeout(self) -> None:
         print("timeout")
         return 
+    

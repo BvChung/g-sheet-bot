@@ -14,8 +14,9 @@ class Sheet:
     instance = None
 
     def __init__(self, credentials, sheetName) -> None:
-        self.leetcodeSheet = gspread.service_account_from_dict(credentials).open(sheetName).sheet1
+        self.__leetcodeSheet = gspread.service_account_from_dict(credentials).open(sheetName).sheet1
         self.__cachedData: list[dict] = []
+        self.__cachedCategoryData: list[dict] = []
     
     @staticmethod
     def getSheetState():
@@ -23,30 +24,39 @@ class Sheet:
             Sheet.instance = Sheet(config.credentials, config.sheetName)
         return Sheet.instance
     
-    def __fetchData(self)->None:
-        self.__cachedData = self.leetcodeSheet.get_all_records()
-    
-    def getAllData(self)->list[dict]:
-        if not self.__cachedData:
-            self.__fetchData()
-        return self.__cachedData
+    def __fetch(self)->None:
+        self.__cachedData = self.__leetcodeSheet.get_all_records()
 
-    def filterByCategory(self, category: str)->list[dict]:
+    def __filter(self, category:str)->list[dict]:
         filteredData :list[dict] = []
         for row in self.__cachedData:
             if row['Category'].lower() == category.lower():
                 filteredData.append(row)
 
-        return filteredData
-
-    def refetchData(self)->list[dict]:
-        self.__fetchData()
+        self.__cachedCategoryData = filteredData
+        return self.__cachedCategoryData
+    
+    def getAllData(self)->list[dict]:
+        if not self.__cachedData:
+            self.__fetch()
         return self.__cachedData
 
+    def filterByCategory(self, category: str)->list[dict]:
+        if not self.__cachedCategoryData:
+            self.__fetch()
+        return self.__filter(category)
+
+    def refetchAllData(self)->list[dict]:
+        self.__fetch()
+        return self.__cachedData
+    
+    def refetchCategoryData(self, category: str)->list[dict]:
+        self.__fetch()
+        return self.__filter(category)
+    
     def createEntry(self, entries: list)->None:
         try:
-            self.leetcodeSheet.insert_row(entries, 2)
-            self.leetcodeSheet.sort((1, 'asc'))
-            self.__fetchData()
+            self.__leetcodeSheet.insert_row(entries, 2)
+            self.__leetcodeSheet.sort((1, 'asc'))
         except:
             print('Unable to add new entry')
