@@ -19,7 +19,7 @@ class Sheet:
         self.__cachedCategoryData: list[dict] = []
     
     @staticmethod
-    def getSheetState():
+    def getState():
         if not Sheet.instance:
             Sheet.instance = Sheet(config.credentials, config.sheetName)
         return Sheet.instance

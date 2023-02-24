@@ -5,7 +5,7 @@ from .sheet import Sheet
 
 class PaginatedView(discord.ui.View, ABC):
     def __init__(self, gSheet: Sheet, embedFactory: Embeds, data: list[dict], title:str, currentPage: int, currentIndex:int, itemsPerPage: int):
-        super().__init__(timeout=200)
+        super().__init__(timeout=None)
         self.gSheet = gSheet
         self.embedFactory = embedFactory
         self.data = data
@@ -38,21 +38,26 @@ class PaginatedView(discord.ui.View, ABC):
         self.currentIndex = len(self.data) - self.itemsPerPage
         await self.updateView(interaction)
     
-    @discord.ui.button(label='🔃 Refresh', style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label='Refresh', style=discord.ButtonStyle.blurple)
     async def refreshBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.refreshData()
         self.currentPage = 1
         self.currentIndex = 0
         await self.updateView(interaction)
 
-    async def updateView(self, interaction: discord.Interaction):
-        embed = self.embedFactory.createEmbed(self.data, self.title, self.currentPage, self.currentIndex, self.itemsPerPage)
-        self.updateBtns()
-        await interaction.response.edit_message(embed=embed, view=self)
+    @discord.ui.button(label='Exit', style=discord.ButtonStyle.red)
+    async def exitBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.timeout = .0000000001
+        await interaction.response.edit_message(view=self)
 
     @abstractmethod
     def refreshData(self):
         pass
+
+    async def updateView(self, interaction: discord.Interaction):
+        embed = self.embedFactory.createEmbed(self.data, self.title, self.currentPage, self.currentIndex, self.itemsPerPage)
+        self.updateBtns()
+        await interaction.response.edit_message(embed=embed, view=self)
 
     def updateBtns(self):
         if self.currentPage == 1:
@@ -73,8 +78,3 @@ class PaginatedView(discord.ui.View, ABC):
             if self.nextPageBtn.disabled and self.toLastPageBtn.disabled:
                 self.nextPageBtn.disabled = False
                 self.toLastPageBtn.disabled = False
-            
-    def on_timeout(self) -> None:
-        print("timeout")
-        return 
-    
