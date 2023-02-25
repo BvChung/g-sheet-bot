@@ -11,11 +11,10 @@ class CategoryView(PaginatedView):
     def getState(gSheet: Sheet, embedFactory: Embeds, data: list[dict], title:str, currentPage: int, currentIndex: int, itemsPerPage: int):
         if not CategoryView.instance:
             CategoryView.instance = CategoryView(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
-            return CategoryView.instance
         return CategoryView.instance
 
     def refreshData(self):
-        self.data = self.gSheet.refetchCategoryData(self.title)
+        self._data = self._gSheet.refetchCategoryData(self.title)
     
     def on_timeout(self) -> None:
         print('Category timeout')

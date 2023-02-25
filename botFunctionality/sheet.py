@@ -2,7 +2,8 @@ import gspread
 import config
 
 Column_Headers = ['Number', 'Name', 'Category', 'Solution', 'Link', 'Review']
-# newRow = [49, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
+newR = [[1, "Group Anagrams", "Arrays", "Use a", "link", 'no']]
+newRow = [49, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
 
 # print(leetcodeSheet.sheet1.delete_rows())
 # print(leetcodeSheet.sheet1.insert_row(newRow, 2))
@@ -36,6 +37,9 @@ class Sheet:
         self.__cachedCategoryData = filteredData
         return self.__cachedCategoryData
     
+    def __find(self, problemNumber):
+        return self.__leetcodeSheet.find(problemNumber)
+    
     def getAllData(self)->list[dict]:
         if not self.__cachedData:
             self.__fetch()
@@ -60,3 +64,37 @@ class Sheet:
             self.__leetcodeSheet.sort((1, 'asc'))
         except:
             print('Unable to add new entry')
+    
+    def getEntry(self, problemNumber: int):
+        cell = self.__find(str(problemNumber))
+
+        if not cell:
+            return None
+        
+        rowNumber: int = cell.row
+        return [rowNumber, self.__leetcodeSheet.row_values(cell.row)]
+        
+    def updateEntry(self, rowNumber: int, updatedData: list)->bool:
+        cellRange = 'A' + str(rowNumber) + ":" + "F"
+        try:
+            self.__leetcodeSheet.update(cellRange, updatedData) 
+            return True
+        except:
+            print(f'Could not update row #{rowNumber}.')
+            return False
+    
+    def deleteEntry(self, problemNumber: int)->bool:
+        cell = self.__find(str(problemNumber))
+
+        if not cell:
+            return False
+        
+        try:
+            self.__leetcodeSheet.delete_rows(int(cell.row))
+            return True
+        except:
+            print(f'Could not delete row #{cell.row}')
+            return False
+    
+    def testUpdate(self):
+        self.__leetcodeSheet.update('A7:F7', newR)

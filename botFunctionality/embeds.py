@@ -7,9 +7,10 @@ class Embeds:
     def createEmbed(self, data: list[dict], title:str, currentPage:int, start:int, itemsPerPage: int):
         embed = discord.Embed(title=title, color=discord.Colour.orange(), description=f'Page {currentPage}')
         end = start + itemsPerPage
+        
         for row in data[start: end]:
-            problem = str(row['Number']) + '. ' + str(row['Name']) + ' ' + '[' + row['Category'] + ']'
-            if (row['Review'] == 'yes'):
+            problem = str(row['Number']) + '. ' + str(row['Name']) + ' ' + '[' + str(row['Category']) + ']'
+            if (str(row['Review']) == 'yes'):
                 problem = '⭐ ' + problem
 
             solution = 'Solution: ' + str(row['Solution'])
