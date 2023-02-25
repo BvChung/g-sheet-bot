@@ -1,15 +1,9 @@
 import gspread
 import config
 
-Column_Headers = ['Number', 'Name', 'Category', 'Solution', 'Link', 'Review']
-newR = [[1, "Group Anagrams", "Arrays", "Use a", "link", 'no']]
-newRow = [49, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
-
-# print(leetcodeSheet.sheet1.delete_rows())
-# print(leetcodeSheet.sheet1.insert_row(newRow, 2))
-# leetcodeSheet.sheet1.sort((1, 'asc'))
-# print(leetcodeSheet.sheet1.get_all_records())
-# print(leetcodeSheet.sheet1.row_values(2))
+# Column_Headers = ['Number', 'Name', 'Category', 'Solution', 'Link', 'Review']
+# newR = [[1, "Group Anagrams", "Arrays", "Use a", "link", 'no']]
+# newRow = [49, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
 
 class Sheet:
     instance = None
@@ -37,7 +31,7 @@ class Sheet:
         self.__cachedCategoryData = filteredData
         return self.__cachedCategoryData
     
-    def __find(self, problemNumber):
+    def __find(self, problemNumber: str):
         return self.__leetcodeSheet.find(problemNumber)
     
     def getAllData(self)->list[dict]:
@@ -58,12 +52,14 @@ class Sheet:
         self.__fetch()
         return self.__filter(category)
     
-    def createEntry(self, entries: list)->None:
+    def createEntry(self, entries: list)->bool:
         try:
             self.__leetcodeSheet.insert_row(entries, 2)
             self.__leetcodeSheet.sort((1, 'asc'))
+            return True
         except:
-            print('Unable to add new entry')
+            print('Unable to create new entry')
+            return False
     
     def getEntry(self, problemNumber: int):
         cell = self.__find(str(problemNumber))
@@ -75,7 +71,7 @@ class Sheet:
         return [rowNumber, self.__leetcodeSheet.row_values(cell.row)]
         
     def updateEntry(self, rowNumber: int, updatedData: list)->bool:
-        cellRange = 'A' + str(rowNumber) + ":" + "F"
+        cellRange = f'A{str(rowNumber)}:F{str(rowNumber)}' 
         try:
             self.__leetcodeSheet.update(cellRange, updatedData) 
             return True
@@ -95,6 +91,3 @@ class Sheet:
         except:
             print(f'Could not delete row #{cell.row}')
             return False
-    
-    def testUpdate(self):
-        self.__leetcodeSheet.update('A7:F7', newR)

@@ -8,7 +8,6 @@ def main():
     client = MyClient(config.guildId)
     gSheet = Sheet.getState()
     embedFactory = Embeds()
-    gSheet.testUpdate()
     
     @client.tree.command(description="Get all data")
     async def getall(interaction: discord.Interaction):
@@ -20,7 +19,7 @@ def main():
             title, currentPage, currentIndex, itemsPerPage = "All Problems", 1, 0, 5
             pagination = DefaultView.getState(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
             embed = embedFactory.createEmbed(data, title, currentPage, currentIndex, itemsPerPage)
-            await interaction.response.send_message('Received data. ✅', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
             displayedMessage = await interaction.channel.send(embed=embed, view=pagination)
             await pagination.wait()
             await displayedMessage.delete()
@@ -41,13 +40,13 @@ def main():
             
             currentPage, currentIndex, itemsPerPage = 1, 0, 5
             pagination = CategoryView.getState(gSheet, embedFactory, data, category, currentPage, currentIndex, itemsPerPage)
-            await interaction.response.send_message('Received data. ✅', ephemeral=True, delete_after=5)
+            await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
             embed = embedFactory.createEmbed(data, category, currentPage, currentIndex, itemsPerPage)
             displayedMessage = await interaction.channel.send(embed=embed, view=pagination)
             await pagination.wait()
             await displayedMessage.delete()
         except:
-            await interaction.response.send_message('Could not send spreadsheet data ❌', ephemeral=True, delete_after=30)
+            await interaction.response.send_message('Could not receive spreadsheet data. ❌', ephemeral=True, delete_after=30)
 
     @client.tree.command(description="Create new entry")
     async def newentry(interaction: discord.Interaction):
@@ -59,7 +58,7 @@ def main():
         rowInformation = gSheet.getEntry(number)
 
         if not rowInformation:
-            return await interaction.response.send_message(f'Problem #{number} could not be found.', ephemeral=True, delete_after=15)
+            return await interaction.response.send_message(f'Problem #{number} could not be found. ⚠️', ephemeral=True, delete_after=15)
 
         rowNumber: int = rowInformation[0]
         rowData: list = rowInformation[1]
@@ -83,9 +82,9 @@ def main():
     @app_commands.describe(number="Problem number")
     async def deleteentry(interaction: discord.Interaction, number: int):
         if gSheet.deleteEntry(number):
-            return await interaction.response.send_message(f'Problem #{number} has been deleted.', ephemeral=True, delete_after=15)
+            return await interaction.response.send_message(f'Problem #{number} has been deleted. ✅', ephemeral=True, delete_after=15)
         else:
-            return await interaction.response.send_message(f'Problem #{number} could not be deleted.', ephemeral=True, delete_after=15)
+            return await interaction.response.send_message(f'Problem #{number} could not be deleted. ❌', ephemeral=True, delete_after=15)
         
     client.run(config.token)
 

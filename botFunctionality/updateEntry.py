@@ -30,6 +30,6 @@ class UpdateEntry(LeetcodeEntry):
             raise Exception('GSpread API Error: Updating entry needs a 2d array of data [[]].')
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-        await interaction.response.send_message(f'Could not update entry ❌.\nIssue: {error}.', ephemeral=True, delete_after=30)
+        await interaction.response.send_message(f'Could not update entry. ❌\nIssue: {error}.', ephemeral=True, delete_after=30)
 
         traceback.print_tb(error.__traceback__)

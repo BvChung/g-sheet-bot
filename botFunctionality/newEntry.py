@@ -23,10 +23,12 @@ class NewEntry(LeetcodeEntry):
         if str(self.review).lower() not in REVIEW:
             raise Exception('Invalid review input')
 
-        self.gSheet.createEntry([number, name, str(self.category), str(self.solution), str(self.link), str(self.review).lower()])
-        await interaction.response.send_message('Created new entry. ✅', ephemeral=True, delete_after=15)
+        if self.gSheet.createEntry([number, name, str(self.category), str(self.solution), str(self.link), str(self.review).lower()]):
+            await interaction.response.send_message('Created new entry. ✅', ephemeral=True, delete_after=15)
+        else:
+            raise Exception('GSpread API Error: Data format error.')
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
-        await interaction.response.send_message(f'Could not create new entry ❌.\nIssue: {error}.', ephemeral=True, delete_after=30)
+        await interaction.response.send_message(f'Could not create new entry. ❌\nIssue: {error}.', ephemeral=True, delete_after=30)
 
         traceback.print_tb(error.__traceback__)
