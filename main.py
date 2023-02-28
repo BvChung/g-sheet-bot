@@ -63,8 +63,9 @@ def main():
         embed = embedFactory.createDataEmbed(data, topic, currentPage, currentIndex, itemsPerPage)
         displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
         TopicView.messageId = displayedMessage.id
-        await displayView.wait()
-        await displayedMessage.delete()
+        timeout = await displayView.wait()
+        if timeout:
+            await displayedMessage.delete()
 
     @client.tree.command(description="Create new entry")
     async def newentry(interaction: discord.Interaction):
