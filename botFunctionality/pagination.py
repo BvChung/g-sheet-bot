@@ -55,7 +55,7 @@ class PaginatedView(discord.ui.View, ABC):
         pass
 
     async def _updateView(self, interaction: discord.Interaction):
-        embed = self._embedFactory.createEmbed(self._data, self.title, self.currentPage, self.currentIndex, self.itemsPerPage)
+        embed = self._embedFactory.createDataEmbed(self._data, self.title, self.currentPage, self.currentIndex, self.itemsPerPage)
         self._updateBtns()
         await interaction.response.edit_message(embed=embed, view=self)
 

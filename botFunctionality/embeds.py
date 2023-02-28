@@ -4,23 +4,23 @@ class Embeds:
     def __init__(self) -> None:
         pass
 
-    def createEmbed(self, data: list[dict], title:str, currentPage:int, start:int, itemsPerPage: int):
+    def createDataEmbed(self, data: list[dict], title:str, currentPage:int, start:int, itemsPerPage: int):
         embed = discord.Embed(title=title, color=discord.Colour.orange(), description=f'Page {currentPage}')
         end = start + itemsPerPage
         
-        # for row in data[start: end]:
         for row in data[start: end]:
-            problem = str(row['Number']) + '. ' + str(row['Name']) + ' ' + '[' + str(row['Topic']) + ': '
+            problem = str(row['Number']) + '. ' + str(row['Name']) + ' ' + '[' + str(row['Topic']) + ': ' + str(row['Difficulty'])
 
             if (str(row['Review']) == 'yes'):
                 problem = '⭐ ' + problem
-
-            if (str(row['Difficulty']) == 'Easy'):
-                problem = problem + row['Difficulty'] + ' 🟩]'
-            elif (str(row['Difficulty']) == 'Medium'):
-                problem = problem + row['Difficulty'] + ' 🟨]'
-            elif (str(row['Difficulty']) == 'Hard'):
-                problem = problem + row['Difficulty'] + ' 🟥]'
+            
+            match row['Difficulty']:
+                case 'Easy':
+                    problem = problem + ' 🟩]'
+                case 'Medium':
+                    problem = problem + ' 🟨]'
+                case 'Hard':
+                    problem = problem + ' 🟥]'
 
             solution = 'Solution: ' + str(row['Solution'])
             link = 'Link: ' + str(row['Link'])
@@ -29,7 +29,12 @@ class Embeds:
 
         return embed
     
-    def helpCommand(self):
-        embed = discord.Embed(title='leetBot Commands', color=discord.Colour.random(), description='All available commands.')
-        embed.add_field(name='/newentry', value='', inline=False)
+    def createHelpEmbed(self, commands: list[dict]):
+        embed = discord.Embed(title='leetBot Commands', color=discord.Colour.random())
+
+        for cmd in commands:
+            name = cmd['name']
+            description = cmd['description']
+            embed.add_field(name=name, value=description, inline=False)
+        
         return embed

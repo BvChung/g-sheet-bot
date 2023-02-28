@@ -1,7 +1,7 @@
 import discord
+import config
 from discord import app_commands
 from typing import Literal
-import config
 from botFunctionality import *
 
 def main():
@@ -11,48 +11,59 @@ def main():
     
     @client.tree.command(description="Get all data")
     async def getall(interaction: discord.Interaction):
-        try:
-            if DefaultView.instance:
-                return await interaction.response.send_message('There is already an active instance. ⚠️', ephemeral=True, delete_after=15)
-                
+        if DefaultView.instance:
+            try:
+                foundMessage = await interaction.channel.fetch_message(DefaultView.messageId)
+                return await interaction.response.send_message(f'There is already an active instance in #{foundMessage.channel} channel. ⚠️', ephemeral=True, delete_after=15)
+            except Exception as err:
+                print(err)
+                DefaultView.instance = None
+
+        try:        
             data = gSheet.getAllData()
-            title, currentPage, currentIndex, itemsPerPage = "All Problems", 1, 0, 5
-            pagination = DefaultView.getState(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
-            embed = embedFactory.createEmbed(data, title, currentPage, currentIndex, itemsPerPage)
-            await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
-            displayedMessage = await interaction.channel.send(embed=embed, view=pagination)
-            await pagination.wait()
+        except Exception as err:
+            print(err)
+            return await interaction.response.send_message('Unable to receive spreadsheet data. ❌', ephemeral=True, delete_after=30)
+
+        await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
+        
+        title, currentPage, currentIndex, itemsPerPage = "All Problems", 1, 0, 5
+        displayView = DefaultView.getState(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
+        embed = embedFactory.createDataEmbed(data, title, currentPage, currentIndex, itemsPerPage)
+        displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
+        DefaultView.messageId = displayedMessage.id
+        timeout = await displayView.wait()
+        if timeout:
             await displayedMessage.delete()
-        except:
-            await interaction.response.send_message('Unable to recieve spreadsheet data ❌', ephemeral=True, delete_after=30)
     
     @client.tree.command(description="Filter data by topic")
     @app_commands.describe(topic="Problem topic")
     async def gettopic(interaction: discord.Interaction, topic: Literal['Arrays', '2-Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D-DP', '2D-DP', 'Bit Manipulation', 'Math']):
-        try:
-            if TopicView.instance and await interaction.channel.fetch_message(TopicView.msgID):
-                return await interaction.response.send_message('There is already an active instance. ⚠️', ephemeral=True, delete_after=15)
-        except Exception as e:
-            print(e)
+        if TopicView.instance:
+            try:
+                foundMessage = await interaction.channel.fetch_message(TopicView.messageId)
+                return await interaction.response.send_message(f'There is already an active instance in #{foundMessage.channel} channel. ⚠️', ephemeral=True, delete_after=15)
+            except Exception as err:
+                print(err)
+                TopicView.instance = None
 
         try:        
             data = gSheet.filterByTopic(topic)
-        except Exception as e:
-            print(e)
-            await interaction.response.send_message('Unable to recieve spreadsheet data. ❌', ephemeral=True, delete_after=30)
+        except Exception as err:
+            print(err)
+            return await interaction.response.send_message('Unable to receive spreadsheet data. ❌', ephemeral=True, delete_after=30)
 
         if not data:
             return await interaction.response.send_message('There are no entries with this topic. ⚠️' , ephemeral=True, delete_after=15)
 
-        currentPage, currentIndex, itemsPerPage = 1, 0, 5
-        pagination = TopicView.getState(gSheet, embedFactory, data, topic, currentPage, currentIndex, itemsPerPage)
         await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
-        embed = embedFactory.createEmbed(data, topic, currentPage, currentIndex, itemsPerPage)
-        displayedMessage = await interaction.channel.send(embed=embed, view=pagination)
-        print(f'msg id: {displayedMessage.id}')
-        TopicView.msgID = displayedMessage.id
-        await pagination.wait()
-        print('done')
+        
+        currentPage, currentIndex, itemsPerPage = 1, 0, 5
+        displayView = TopicView.getState(gSheet, embedFactory, data, topic, currentPage, currentIndex, itemsPerPage)
+        embed = embedFactory.createDataEmbed(data, topic, currentPage, currentIndex, itemsPerPage)
+        displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
+        TopicView.messageId = displayedMessage.id
+        await displayView.wait()
         await displayedMessage.delete()
 
     @client.tree.command(description="Create new entry")
@@ -93,17 +104,10 @@ def main():
         else:
             return await interaction.response.send_message(f'Problem #{number} could not be deleted. ❌', ephemeral=True, delete_after=15)
         
-    # @client.tree.command(description="Reset all instances of views if message was manually deleted.")
-    # async def resetinstances(interaction: discord.Interaction):
-    #     if gSheet.deleteEntry(number):
-    #         return await interaction.response.send_message(f'Problem #{number} has been deleted. ✅', ephemeral=True, delete_after=15)
-    #     else:
-    #         return await interaction.response.send_message(f'Problem #{number} could not be deleted. ❌', ephemeral=True, delete_after=15)
-        
     @client.tree.command(description="Help command => Displays all available commands.")
     async def help(interaction: discord.Interaction):
-        embed = embedFactory.helpCommand()
-        return await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=60)
+        embed = embedFactory.createHelpEmbed(config.commandsInfo)
+        return await interaction.response.send_message(embed=embed, ephemeral=True)
 
     client.run(config.token)
 
