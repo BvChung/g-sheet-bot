@@ -78,3 +78,6 @@ class PaginatedView(discord.ui.View, ABC):
             if self.nextPageBtn.disabled and self.toLastPageBtn.disabled:
                 self.nextPageBtn.disabled = False
                 self.toLastPageBtn.disabled = False
+    
+    async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
+        return await interaction.response.send_message(error, ephemeral=True, delete_after=15)

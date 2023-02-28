@@ -1,35 +1,31 @@
 import gspread
-import config
-
-# Column_Headers = ['Number', 'Name', 'Category', 'Solution', 'Link', 'Review']
-# newR = [[1, "Group Anagrams", "Arrays", "Use a", "link", 'no']]
-# newRow = [49, "Group Anagrams", "Arrays", "Use a hashmap with key: [the count of number of letters in the alphabet using ascii ord(curr char) - ord('a') indexed from 0-25] and value: [grouped anagrams]", 'https://leetcode.com/problems/group-anagrams/', 'no']
+# Column_Headers = ['Number', 'Name', 'Difficulty', 'Topic', 'Solution', 'Link', 'Review']
 
 class Sheet:
     instance = None
-
+    
     def __init__(self, credentials, sheetName) -> None:
         self.__leetcodeSheet = gspread.service_account_from_dict(credentials).open(sheetName).sheet1
         self.__cachedData: list[dict] = []
-        self.__cachedCategoryData: list[dict] = []
+        self.__cachedTopicData: list[dict] = []
     
     @staticmethod
-    def getState():
+    def getState(credentials: dict, sheetName: str):
         if not Sheet.instance:
-            Sheet.instance = Sheet(config.credentials, config.sheetName)
+            Sheet.instance = Sheet(credentials, sheetName)
         return Sheet.instance
     
     def __fetch(self)->None:
         self.__cachedData = self.__leetcodeSheet.get_all_records()
 
-    def __filter(self, category:str)->list[dict]:
+    def __filter(self, topic:str)->list[dict]:
         filteredData :list[dict] = []
         for row in self.__cachedData:
-            if row['Category'].lower() == category.lower():
+            if row['Topic'].lower() == topic.lower():
                 filteredData.append(row)
 
-        self.__cachedCategoryData = filteredData
-        return self.__cachedCategoryData
+        self.__cachedTopicData = filteredData
+        return self.__cachedTopicData
     
     def __find(self, problemNumber: str):
         return self.__leetcodeSheet.find(problemNumber)
@@ -39,18 +35,18 @@ class Sheet:
             self.__fetch()
         return self.__cachedData
 
-    def filterByCategory(self, category: str)->list[dict]:
-        if not self.__cachedCategoryData:
+    def filterByTopic(self, topic: str)->list[dict]:
+        if not self.__cachedTopicData:
             self.__fetch()
-        return self.__filter(category)
+        return self.__filter(topic)
 
     def refetchAllData(self)->list[dict]:
         self.__fetch()
         return self.__cachedData
     
-    def refetchCategoryData(self, category: str)->list[dict]:
+    def refetchTopicData(self, topic: str)->list[dict]:
         self.__fetch()
-        return self.__filter(category)
+        return self.__filter(topic)
     
     def createEntry(self, entries: list)->bool:
         try:

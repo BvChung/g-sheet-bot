@@ -14,8 +14,10 @@ class DefaultView(PaginatedView):
         return DefaultView.instance
 
     def refreshData(self):
-        self._data = self._gSheet.refetchAllData()
+        try:
+            self._data = self._gSheet.refetchAllData()
+        except:
+            raise Exception('GSpread API Error: Could not refresh spreadsheet data. ❌')
           
     def on_timeout(self) -> None:
-        print('Default timeout')
         DefaultView.instance = None
