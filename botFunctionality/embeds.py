@@ -5,25 +5,28 @@ class Embeds:
         pass
 
     def createDataEmbed(self, data: list[dict], title:str, currentPage:int, start:int, itemsPerPage: int):
-        embed = discord.Embed(title=title, color=discord.Colour.orange(), description=f'Page {currentPage}')
+        embed = discord.Embed(title=title, color=discord.Colour.dark_teal(), description=f'Page {currentPage}')
         end = start + itemsPerPage
+        if end >= len(data):
+            end = len(data)
         
-        for row in data[start: end]:
-            problem = str(row['Number']) + '. ' + str(row['Name']) + ' ' + '[' + str(row['Topic']) + ': ' + str(row['Difficulty'])
+        for i in range(start, end):
+        # for row in data[start: end]:
+            problem = str(data[i]['Number']) + '. ' + str(data[i]['Name']) + ' ' + '[' + str(data[i]['Topic']) + ': ' + str(data[i]['Difficulty'])
 
-            if (str(row['Review']) == 'yes'):
+            if (str(data[i]['Review']) == 'yes'):
                 problem = '⭐ ' + problem
             
-            match row['Difficulty']:
+            match data[i]['Difficulty']:
                 case 'Easy':
-                    problem = problem + ' 🟩]'
+                    problem += ' 🟩]'
                 case 'Medium':
-                    problem = problem + ' 🟨]'
+                    problem += ' 🟨]'
                 case 'Hard':
-                    problem = problem + ' 🟥]'
+                    problem += ' 🟥]'
 
-            solution = 'Solution: ' + str(row['Solution'])
-            link = 'Link: ' + str(row['Link'])
+            solution = 'Solution: ' + str(data[i]['Solution'])
+            link = 'Link: ' + str(data[i]['Link'])
             output = f'{link}\n{solution}'
             embed.add_field(name=problem, value=output, inline=False)
 

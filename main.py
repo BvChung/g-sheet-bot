@@ -1,23 +1,25 @@
 import discord
-import config
 from discord import app_commands
 from typing import Literal
+from config import *
 from botFunctionality import *
 
 def main():
-    client = MyClient(config.guildId)
-    gSheet = Sheet.getState(config.credentials, config.sheetName)
+    discordConfig = DiscordConfig()
+    gSheetConfig = GoogleSheetsConfig()
+    client = MyClient(discordConfig.getGuildId())
+    gSheet = Sheet.getState(gSheetConfig.getCredentials(), gSheetConfig.getSheetName())
     embedFactory = Embeds()
     
     @client.tree.command(description="Get all data")
     async def getall(interaction: discord.Interaction):
-        if DefaultView.instance:
+        if DefaultView.isActive:
             try:
                 foundMessage = await interaction.channel.fetch_message(DefaultView.messageId)
                 return await interaction.response.send_message(f'There is already an active instance in #{foundMessage.channel} channel. ⚠️', ephemeral=True, delete_after=15)
             except Exception as err:
                 print(err)
-                DefaultView.instance = None
+                DefaultView.isActive = False
 
         try:        
             data = gSheet.getAllData()
@@ -28,24 +30,28 @@ def main():
         await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
         
         title, currentPage, currentIndex, itemsPerPage = "All Problems", 1, 0, 5
-        displayView = DefaultView.getState(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
+        displayView = DefaultView(gSheet, embedFactory, data, title, currentPage, currentIndex, itemsPerPage)
         embed = embedFactory.createDataEmbed(data, title, currentPage, currentIndex, itemsPerPage)
         displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
+        DefaultView.isActive = True
         DefaultView.messageId = displayedMessage.id
+        
         timeout = await displayView.wait()
-        if timeout:
+        if not timeout:
+            DefaultView.isActive = False
+            DefaultView.messageId = None
             await displayedMessage.delete()
     
     @client.tree.command(description="Filter data by topic")
     @app_commands.describe(topic="Problem topic")
     async def gettopic(interaction: discord.Interaction, topic: Literal['Arrays', '2-Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D-DP', '2D-DP', 'Bit Manipulation', 'Math']):
-        if TopicView.instance:
+        if TopicView.isActive:
             try:
                 foundMessage = await interaction.channel.fetch_message(TopicView.messageId)
                 return await interaction.response.send_message(f'There is already an active instance in #{foundMessage.channel} channel. ⚠️', ephemeral=True, delete_after=15)
             except Exception as err:
                 print(err)
-                TopicView.instance = None
+                TopicView.isActive = False
 
         try:        
             data = gSheet.filterByTopic(topic)
@@ -59,12 +65,16 @@ def main():
         await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
         
         currentPage, currentIndex, itemsPerPage = 1, 0, 5
-        displayView = TopicView.getState(gSheet, embedFactory, data, topic, currentPage, currentIndex, itemsPerPage)
+        displayView = TopicView(gSheet, embedFactory, data, topic, currentPage, currentIndex, itemsPerPage)
         embed = embedFactory.createDataEmbed(data, topic, currentPage, currentIndex, itemsPerPage)
         displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
+        TopicView.isActive = True
         TopicView.messageId = displayedMessage.id
+        
         timeout = await displayView.wait()
-        if timeout:
+        if not timeout:
+            TopicView.isActive = False
+            TopicView.messageId = None
             await displayedMessage.delete()
 
     @client.tree.command(description="Create new entry")
@@ -107,10 +117,10 @@ def main():
         
     @client.tree.command(description="Help command => Displays all available commands.")
     async def help(interaction: discord.Interaction):
-        embed = embedFactory.createHelpEmbed(config.commandsInfo)
+        embed = embedFactory.createHelpEmbed(discordConfig.getCommandsInfo())
         return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    client.run(config.token)
+    client.run(discordConfig.getToken())
 
 if __name__ == "__main__":
     main()

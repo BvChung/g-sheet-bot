@@ -28,12 +28,18 @@ class PaginatedView(discord.ui.View, ABC):
 
     @discord.ui.button(label='>', style=discord.ButtonStyle.blurple)
     async def nextPageBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.currentIndex + self.itemsPerPage >= len(self._data):
+            return await self._updateView(interaction)
+        
         self.currentPage += 1
         self.currentIndex += self.itemsPerPage
         await self._updateView(interaction)
 
     @discord.ui.button(label='>|', style=discord.ButtonStyle.secondary)
     async def toLastPageBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.currentIndex + self.itemsPerPage >= len(self._data):
+            return await self._updateView(interaction)
+        
         self.currentPage = (len(self._data) // self.itemsPerPage)
         self.currentIndex = len(self._data) - self.itemsPerPage
         await self._updateView(interaction)
@@ -47,7 +53,7 @@ class PaginatedView(discord.ui.View, ABC):
 
     @discord.ui.button(label='Exit', style=discord.ButtonStyle.red)
     async def exitBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.timeout = .0000000001
+        self.stop()
         await interaction.response.edit_message(view=self)
 
     @abstractmethod
@@ -60,24 +66,27 @@ class PaginatedView(discord.ui.View, ABC):
         await interaction.response.edit_message(embed=embed, view=self)
 
     def _updateBtns(self):
-        if self.currentPage == 1:
+        if self.currentPage == 1 and self.currentIndex + self.itemsPerPage >= len(self._data):
+            self.prevPageBtn.disabled = True
+            self.toFirstPageBtn.disabled = True
+            self.nextPageBtn.disabled = True
+            self.toLastPageBtn.disabled = True
+        elif self.currentPage == 1:
             self.prevPageBtn.disabled = True
             self.toFirstPageBtn.disabled = True
             self.nextPageBtn.disabled = False
             self.toLastPageBtn.disabled = False
-        elif self.currentIndex + self.itemsPerPage >= len(self._data) - 1:
+        elif self.currentIndex + self.itemsPerPage >= len(self._data):
             self.nextPageBtn.disabled = True
             self.toLastPageBtn.disabled = True
             self.prevPageBtn.disabled = False
             self.toFirstPageBtn.disabled = False
-        else:
-            if self.prevPageBtn.disabled and self.toFirstPageBtn.disabled:
-                self.prevPageBtn.disabled = False
-                self.toFirstPageBtn.disabled = False
-            
-            if self.nextPageBtn.disabled and self.toLastPageBtn.disabled:
-                self.nextPageBtn.disabled = False
-                self.toLastPageBtn.disabled = False
+        elif self.prevPageBtn.disabled and self.toFirstPageBtn.disabled and self.currentPage > 1:
+            self.prevPageBtn.disabled = False
+            self.toFirstPageBtn.disabled = False 
+        elif self.nextPageBtn.disabled and self.toLastPageBtn.disabled and self.currentIndex + self.itemsPerPage < len(self._data):
+            self.nextPageBtn.disabled = False
+            self.toLastPageBtn.disabled = False
     
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
         return await interaction.response.send_message(error, ephemeral=True, delete_after=15)

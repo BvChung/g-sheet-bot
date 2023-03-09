@@ -1,7 +1,6 @@
 import discord
 from .sheet import Sheet
 
-# Column Headers ['Number', 'Name', 'topic', 'Solution', 'Link', 'Review']
 TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries", "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
 REVIEW = ['Yes', 'No']
 DIFFICULTY = ['Easy', 'Medium', 'Hard']
@@ -48,18 +47,18 @@ class LeetcodeEntry(discord.ui.Modal):
         self.gSheet = gSheet
     
     def _validateInputs(self)->list:
-        name = ""
-        number = "" 
-        difficulty = ""
+        number = None
+        name = None
+        difficulty = None
         try:
-            name, number, difficulty = str(self.problemInfo).split(';')
-            difficulty = difficulty.capitalize()
+            number, name, difficulty = str(self.problemInfo).split(';')
         except:
             raise Exception('Invalid number + name + difficulty input. ⚠️\nFormat = #;Name;Difficulty')
         
         if not name or not number or not difficulty:
             raise Exception('Number, name or difficulty can not be blank.')
         
+        difficulty.capitalize()
         if difficulty not in DIFFICULTY:
             raise Exception('Invalid difficulty input. ⚠️')
         
@@ -69,4 +68,4 @@ class LeetcodeEntry(discord.ui.Modal):
         if str(self.review).capitalize() not in REVIEW:
             raise Exception('Invalid review input. ⚠️')
 
-        return [number, name, difficulty.capitalize()]
+        return [number, name, difficulty]

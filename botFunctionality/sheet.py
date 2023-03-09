@@ -1,5 +1,4 @@
 import gspread
-# Column_Headers = ['Number', 'Name', 'Difficulty', 'Topic', 'Solution', 'Link', 'Review']
 
 class Sheet:
     instance = None
@@ -53,8 +52,8 @@ class Sheet:
             self.__leetcodeSheet.insert_row(entries, 2)
             self.__leetcodeSheet.sort((1, 'asc'))
             return True
-        except:
-            print('Unable to create new entry')
+        except Exception as error:
+            print(f'Unable to create new entry.\n{error}')
             return False
     
     def getEntry(self, problemNumber: int):
@@ -67,12 +66,12 @@ class Sheet:
         return [rowNumber, self.__leetcodeSheet.row_values(cell.row)]
         
     def updateEntry(self, rowNumber: int, updatedData: list)->bool:
-        cellRange = f'A{str(rowNumber)}:F{str(rowNumber)}' 
+        cellRange = f'A{str(rowNumber)}:G{str(rowNumber)}' 
         try:
             self.__leetcodeSheet.update(cellRange, updatedData) 
             return True
-        except:
-            print(f'Could not update row #{rowNumber}.')
+        except Exception as error:
+            print(f'Could not update row #{rowNumber}\n{error}.')
             return False
     
     def deleteEntry(self, problemNumber: int)->bool:
@@ -84,6 +83,6 @@ class Sheet:
         try:
             self.__leetcodeSheet.delete_rows(int(cell.row))
             return True
-        except:
-            print(f'Could not delete row #{cell.row}')
+        except Exception as error:
+            print(f'Could not delete row #{cell.row}\n{error}')
             return False
