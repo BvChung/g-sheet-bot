@@ -9,7 +9,7 @@ class LeetcodeEntry(discord.ui.Modal):
     problem_info = discord.ui.TextInput(
         style=discord.TextStyle.short,
         label="Number, Name, Difficulty (Format=#;Name;Diff)",
-        placeholder="Input number, name and difficulty",
+        placeholder="Input number;name;difficulty",
         max_length=200
     )
 
@@ -32,7 +32,7 @@ class LeetcodeEntry(discord.ui.Modal):
         style=discord.TextStyle.paragraph,
         label="Solution",
         placeholder="Your solution",
-        max_length=1000
+        max_length=2000
     )
 
     review = discord.ui.TextInput(
@@ -42,7 +42,7 @@ class LeetcodeEntry(discord.ui.Modal):
         max_length=3
     )
 
-    def __init__(self, *, title: str = ..., google_sheets: Sheet) -> None:
+    def __init__(self, *, title: str, google_sheets: Sheet) -> None:
         super().__init__(title=title)
         self.google_sheets = google_sheets
     

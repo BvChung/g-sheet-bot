@@ -1,6 +1,6 @@
 import discord
 import traceback
-from .leetcodeEntry import LeetcodeEntry
+from .leetcode_entry import LeetcodeEntry
 from .sheet import Sheet
 
 class UpdateEntry(LeetcodeEntry):

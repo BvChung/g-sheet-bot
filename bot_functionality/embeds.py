@@ -32,7 +32,7 @@ class Embeds:
         return embed
     
     def create_help_embed(self, commands: list[dict]):
-        embed = discord.Embed(title='leetBot Commands', color=discord.Colour.random())
+        embed = discord.Embed(title='leetBot Commands', color=discord.Colour.red())
 
         for cmd in commands:
             name = cmd['name']
