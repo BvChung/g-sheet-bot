@@ -6,7 +6,7 @@ REVIEW = ['Yes', 'No']
 DIFFICULTY = ['Easy', 'Medium', 'Hard']
 
 class LeetcodeEntry(discord.ui.Modal):
-    problemInfo = discord.ui.TextInput(
+    problem_info = discord.ui.TextInput(
         style=discord.TextStyle.short,
         label="Number, Name, Difficulty (Format=#;Name;Diff)",
         placeholder="Input number, name and difficulty",
@@ -42,16 +42,16 @@ class LeetcodeEntry(discord.ui.Modal):
         max_length=3
     )
 
-    def __init__(self, *, title: str = ..., gSheet: Sheet) -> None:
+    def __init__(self, *, title: str = ..., google_sheets: Sheet) -> None:
         super().__init__(title=title)
-        self.gSheet = gSheet
+        self.google_sheets = google_sheets
     
-    def _validateInputs(self)->list:
+    def _validate_inputs(self) -> list:
         number = None
         name = None
         difficulty = None
         try:
-            number, name, difficulty = str(self.problemInfo).split(';')
+            number, name, difficulty = str(self.problem_info).split(';')
         except:
             raise Exception('Invalid number + name + difficulty input. ⚠️\nFormat = #;Name;Difficulty')
         

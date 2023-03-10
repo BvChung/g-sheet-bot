@@ -3,85 +3,87 @@ import gspread
 class Sheet:
     instance = None
     
-    def __init__(self, credentials, sheetName) -> None:
-        self.__leetcodeSheet = gspread.service_account_from_dict(credentials).open(sheetName).sheet1
-        self.__cachedData: list[dict] = []
-        self.__cachedTopicData: list[dict] = []
+    def __init__(self, credentials: dict, sheet_name: str, starting_column: str, ending_column: str) -> None:
+        self.__leetcode_sheet = gspread.service_account_from_dict(credentials).open(sheet_name).sheet1
+        self.__cached_data: list[dict] = []
+        self.__cached_topic_data: list[dict] = []
+        self.starting_column = starting_column
+        self.ending_column = ending_column
     
     @staticmethod
-    def getState(credentials: dict, sheetName: str):
+    def get_state(credentials: dict, sheet_name: str, starting_column: str, ending_column: str):
         if not Sheet.instance:
-            Sheet.instance = Sheet(credentials, sheetName)
+            Sheet.instance = Sheet(credentials, sheet_name, starting_column, ending_column)
         return Sheet.instance
     
-    def __fetch(self)->None:
-        self.__cachedData = self.__leetcodeSheet.get_all_records()
+    def __fetch(self) -> None:
+        self.__cached_data = self.__leetcode_sheet.get_all_records()
 
-    def __filter(self, topic:str)->list[dict]:
-        filteredData :list[dict] = []
-        for row in self.__cachedData:
+    def __filter(self, topic:str) -> list[dict]:
+        filtered_data :list[dict] = []
+        for row in self.__cached_data:
             if row['Topic'].lower() == topic.lower():
-                filteredData.append(row)
+                filtered_data.append(row)
 
-        self.__cachedTopicData = filteredData
-        return self.__cachedTopicData
+        self.__cached_topic_data = filtered_data
+        return self.__cached_topic_data
     
-    def __find(self, problemNumber: str):
-        return self.__leetcodeSheet.find(problemNumber)
+    def __find(self, problem_number: str):
+        return self.__leetcode_sheet.find(problem_number)
     
-    def getAllData(self)->list[dict]:
-        if not self.__cachedData:
+    def get_all_data(self) -> list[dict]:
+        if not self.__cached_data:
             self.__fetch()
-        return self.__cachedData
+        return self.__cached_data
 
-    def filterByTopic(self, topic: str)->list[dict]:
-        if not self.__cachedTopicData:
+    def filter_by_topic(self, topic: str) -> list[dict]:
+        if not self.__cached_topic_data:
             self.__fetch()
         return self.__filter(topic)
 
-    def refetchAllData(self)->list[dict]:
+    def refetch_all_data(self) -> list[dict]:
         self.__fetch()
-        return self.__cachedData
+        return self.__cached_data
     
-    def refetchTopicData(self, topic: str)->list[dict]:
+    def refetch_topic_data(self, topic: str) -> list[dict]:
         self.__fetch()
         return self.__filter(topic)
     
-    def createEntry(self, entries: list)->bool:
+    def create_entry(self, entries: list) -> bool:
         try:
-            self.__leetcodeSheet.insert_row(entries, 2)
-            self.__leetcodeSheet.sort((1, 'asc'))
+            self.__leetcode_sheet.insert_row(entries, 2)
+            self.__leetcode_sheet.sort((1, 'asc'))
             return True
         except Exception as error:
             print(f'Unable to create new entry.\n{error}')
             return False
     
-    def getEntry(self, problemNumber: int):
-        cell = self.__find(str(problemNumber))
+    def get_entry(self, problem_number: int):
+        cell = self.__find(str(problem_number))
 
         if not cell:
             return None
         
-        rowNumber: int = cell.row
-        return [rowNumber, self.__leetcodeSheet.row_values(cell.row)]
+        row_number: int = cell.row
+        return [row_number, self.__leetcode_sheet.row_values(cell.row)]
         
-    def updateEntry(self, rowNumber: int, updatedData: list)->bool:
-        cellRange = f'A{str(rowNumber)}:G{str(rowNumber)}' 
+    def update_entry(self, row_number: int, updated_data: list) -> bool:
+        cell_range = f'{self.starting_column}{str(row_number)}:{self.ending_column}{str(row_number)}' 
         try:
-            self.__leetcodeSheet.update(cellRange, updatedData) 
+            self.__leetcode_sheet.update(cell_range, updated_data) 
             return True
         except Exception as error:
-            print(f'Could not update row #{rowNumber}\n{error}.')
+            print(f'Could not update row #{row_number}\n{error}.')
             return False
     
-    def deleteEntry(self, problemNumber: int)->bool:
-        cell = self.__find(str(problemNumber))
+    def delete_entry(self, problem_number: int) -> bool:
+        cell = self.__find(str(problem_number))
 
         if not cell:
             return False
         
         try:
-            self.__leetcodeSheet.delete_rows(int(cell.row))
+            self.__leetcode_sheet.delete_rows(int(cell.row))
             return True
         except Exception as error:
             print(f'Could not delete row #{cell.row}\n{error}')

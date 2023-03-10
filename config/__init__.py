@@ -1,2 +1,2 @@
-from .googleSheetsConfig import GoogleSheetsConfig
-from .discordConfig import DiscordConfig
+from .google_sheets_config import GoogleSheetsConfig
+from .discord_config import DiscordConfig

@@ -4,14 +4,13 @@ class Embeds:
     def __init__(self) -> None:
         pass
 
-    def createDataEmbed(self, data: list[dict], title:str, currentPage:int, start:int, itemsPerPage: int):
-        embed = discord.Embed(title=title, color=discord.Colour.dark_teal(), description=f'Page {currentPage}')
-        end = start + itemsPerPage
-        if end >= len(data):
-            end = len(data)
+    def create_data_embed(self, data: list[dict], title:str, current_page:int, starting_index:int, items_per_page: int):
+        embed = discord.Embed(title=title, color=discord.Colour.dark_teal(), description=f'Page {current_page}')
+        ending_index = starting_index + items_per_page
+        if ending_index >= len(data):
+            ending_index = len(data)
         
-        for i in range(start, end):
-        # for row in data[start: end]:
+        for i in range(starting_index, ending_index):
             problem = str(data[i]['Number']) + '. ' + str(data[i]['Name']) + ' ' + '[' + str(data[i]['Topic']) + ': ' + str(data[i]['Difficulty'])
 
             if (str(data[i]['Review']) == 'yes'):
@@ -32,7 +31,7 @@ class Embeds:
 
         return embed
     
-    def createHelpEmbed(self, commands: list[dict]):
+    def create_help_embed(self, commands: list[dict]):
         embed = discord.Embed(title='leetBot Commands', color=discord.Colour.random())
 
         for cmd in commands:
