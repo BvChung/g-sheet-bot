@@ -1,7 +1,7 @@
 import sys
-from .embeds import Embeds
+from ..embeds import Embeds
 from .pagination import PaginatedView
-from .sheet import Sheet
+from ..sheet import Sheet
 
 class DefaultView(PaginatedView):
     is_active: bool = False

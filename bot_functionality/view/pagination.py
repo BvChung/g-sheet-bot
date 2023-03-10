@@ -1,7 +1,7 @@
 import discord
 from abc import ABC, abstractmethod
-from .embeds import Embeds
-from .sheet import Sheet
+from ..embeds import Embeds
+from ..sheet import Sheet
 
 class PaginatedView(discord.ui.View, ABC):
     def __init__(self, google_sheets: Sheet, embed_factory: Embeds, data: list[dict], title:str, current_page: int, current_index:int, items_per_page: int):

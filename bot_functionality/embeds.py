@@ -13,7 +13,7 @@ class Embeds:
         for i in range(starting_index, ending_index):
             problem = str(data[i]['Number']) + '. ' + str(data[i]['Name']) + ' ' + '[' + str(data[i]['Topic']) + ': ' + str(data[i]['Difficulty'])
 
-            if (str(data[i]['Review']) == 'yes'):
+            if (str(data[i]['Review']) == 'Yes'):
                 problem = '⭐ ' + problem
             
             match data[i]['Difficulty']:

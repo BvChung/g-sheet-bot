@@ -1,5 +1,5 @@
 import discord
-from .sheet import Sheet
+from ..sheet import Sheet
 
 TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries", "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
 REVIEW = ['Yes', 'No']

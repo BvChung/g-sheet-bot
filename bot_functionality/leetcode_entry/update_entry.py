@@ -1,7 +1,7 @@
 import discord
 import traceback
-from .leetcode_entry import LeetcodeEntry
-from .sheet import Sheet
+from .entry import LeetcodeEntry
+from ..sheet import Sheet
 
 class UpdateEntry(LeetcodeEntry):
     def __init__(self, *, title: str, google_sheets: Sheet, row_number) -> None:
