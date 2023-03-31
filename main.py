@@ -78,16 +78,16 @@ def main() -> None:
             await displayedMessage.delete()
 
     @client.tree.command(description="Create new entry")
-    async def newentry(interaction: discord.Interaction):
-        await interaction.response.send_modal(NewEntry(title="New Leetcode Entry", google_sheets=google_sheets))
+    async def createentry(interaction: discord.Interaction):
+        await interaction.response.send_modal(CreateEntry(title="New Leetcode Entry", google_sheets=google_sheets))
 
     @client.tree.command(description="Update entry")
     @app_commands.describe(number="Problem number")
     async def updateentry(interaction: discord.Interaction, number: int):
-        row_information = google_sheets.get_entry(number)
-
-        if not row_information:
-            return await interaction.response.send_message(f'Problem #{number} could not be found. ⚠️', ephemeral=True, delete_after=15)
+        try:
+            row_information = google_sheets.get_entry(number)
+        except Exception as error:
+            return await interaction.response.send_message(error, ephemeral=True, delete_after=15)
 
         row_number: int = row_information[0]
         row_data: list = row_information[1]
@@ -110,11 +110,13 @@ def main() -> None:
     @client.tree.command(description="Delete entry")
     @app_commands.describe(number="Problem number")
     async def deleteentry(interaction: discord.Interaction, number: int):
-        if google_sheets.delete_entry(number):
-            return await interaction.response.send_message(f'Problem #{number} has been deleted. ✅', ephemeral=True, delete_after=15)
-        else:
-            return await interaction.response.send_message(f'Problem #{number} could not be deleted. ❌', ephemeral=True, delete_after=15)
-        
+        try:
+            google_sheets.delete_entry(number)
+        except Exception as error:
+            return await interaction.response.send_message(error, ephemeral=True, delete_after=15)
+
+        await interaction.response.send_message(f'Problem #{number} has been deleted. ✅', ephemeral=True, delete_after=15)
+
     @client.tree.command(description="Help command => Displays all available commands.")
     async def help(interaction: discord.Interaction):
         embed = embed_factory.create_help_embed(discord_config.get_commands_info())

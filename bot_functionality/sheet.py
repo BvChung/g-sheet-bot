@@ -17,7 +17,10 @@ class Sheet:
         return Sheet.instance
     
     def __fetch(self) -> None:
-        self.__cached_data = self.__leetcode_sheet.get_all_records()
+        try:
+            self.__cached_data = self.__leetcode_sheet.get_all_records()
+        except Exception as error:
+            raise Exception(f'Unable to fetch spreadsheet data.\n{error}')
 
     def __filter(self, topic:str) -> list[dict]:
         filtered_data :list[dict] = []
@@ -29,7 +32,12 @@ class Sheet:
         return self.__cached_topic_data
     
     def __find(self, problem_number: str):
-        return self.__leetcode_sheet.find(problem_number)
+        cell = self.__leetcode_sheet.find(problem_number)
+        
+        if not cell:
+            raise Exception(f'Problem #{problem_number} could not be found.')
+        
+        return cell
     
     def get_all_data(self) -> list[dict]:
         if not self.__cached_data:
@@ -49,42 +57,32 @@ class Sheet:
         self.__fetch()
         return self.__filter(topic)
     
-    def create_entry(self, entries: list) -> bool:
+    def create_entry(self, entries: list) -> None:
         try:
             self.__leetcode_sheet.insert_row(entries, 2)
             self.__leetcode_sheet.sort((1, 'asc'))
-            return True
         except Exception as error:
-            print(f'Unable to create new entry.\n{error}')
-            return False
+            raise Exception(f'Unable to create new entry.\n{error}')
     
     def get_entry(self, problem_number: int):
         cell = self.__find(str(problem_number))
 
-        if not cell:
-            return None
-        
         row_number: int = cell.row
         return [row_number, self.__leetcode_sheet.row_values(cell.row)]
         
-    def update_entry(self, row_number: int, updated_data: list) -> bool:
+    def update_entry(self, row_number: int, updated_data: list) -> None:
         cell_range = f'{self.starting_column}{str(row_number)}:{self.ending_column}{str(row_number)}' 
         try:
             self.__leetcode_sheet.update(cell_range, updated_data) 
-            return True
         except Exception as error:
-            print(f'Could not update row #{row_number}\n{error}.')
-            return False
+            print(error)
+            raise Exception(f'Could not update entry.\n{error}.')
     
-    def delete_entry(self, problem_number: int) -> bool:
+    def delete_entry(self, problem_number: int) -> None:
         cell = self.__find(str(problem_number))
-
-        if not cell:
-            return False
         
         try:
             self.__leetcode_sheet.delete_rows(int(cell.row))
-            return True
         except Exception as error:
-            print(f'Could not delete row #{cell.row}\n{error}')
-            return False
+            print(error)
+            raise Exception(f'Could not delete entry.\n{error}')

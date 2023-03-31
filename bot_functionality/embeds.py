@@ -2,10 +2,14 @@ import discord
 
 class Embeds:
     def __init__(self) -> None:
-        pass
+        self.difficulty = {
+            'Easy': '🟩',
+            'Medium': '🟨',
+            'Hard': '🟥'
+        }
 
     def create_data_embed(self, data: list[dict], title:str, current_page:int, starting_index:int, items_per_page: int):
-        embed = discord.Embed(title=title, color=discord.Colour.dark_teal(), description=f'Page {current_page}')
+        embed = discord.Embed(title=title, color=discord.Colour.random(), description=f'Page {current_page}')
         ending_index = starting_index + items_per_page
         if ending_index >= len(data):
             ending_index = len(data)
@@ -16,13 +20,8 @@ class Embeds:
             if (str(data[i]['Review']) == 'Yes'):
                 problem = '⭐ ' + problem
             
-            match data[i]['Difficulty']:
-                case 'Easy':
-                    problem += ' 🟩]'
-                case 'Medium':
-                    problem += ' 🟨]'
-                case 'Hard':
-                    problem += ' 🟥]'
+            difficulty = self.difficulty[data[i]['Difficulty']]
+            problem += ' ' + difficulty + ']'
 
             solution = 'Solution: ' + str(data[i]['Solution'])
             link = 'Link: ' + str(data[i]['Link'])
