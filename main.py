@@ -12,7 +12,7 @@ def main() -> None:
     embed_factory = Embeds()
     
     @client.tree.command(description="Get all data")
-    async def getall(interaction: discord.Interaction):
+    async def get_all(interaction: discord.Interaction):
         if DefaultView.is_active:
             try:
                 found_message = await interaction.channel.fetch_message(DefaultView.message_id)
