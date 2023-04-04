@@ -20,7 +20,7 @@ class Sheet:
         try:
             self.__cached_data = self.__leetcode_sheet.get_all_records()
         except Exception as error:
-            raise Exception(f'Unable to fetch spreadsheet data.\n{error}')
+            raise Exception(f'Unable to fetch spreadsheet data. ❌\n{error}')
 
     def __filter(self, topic:str) -> list[dict]:
         filtered_data :list[dict] = []

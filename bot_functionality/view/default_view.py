@@ -8,7 +8,7 @@ class DefaultView(PaginatedView):
     message_id: int = None
 
     def __init__(self, google_sheets: Sheet, embed_factory: Embeds, data: list[dict], title:str, current_page: int, current_index: int, items_per_page: int):
-        super().__init__(google_sheets, embed_factory, data, title, current_page, current_index, items_per_page)
+        super().__init__(google_sheets, embed_factory, data, title, "Default", current_page, current_index, items_per_page)
 
     def refresh_data(self):
         try:
