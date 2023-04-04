@@ -8,8 +8,13 @@ class Embeds:
             'Hard': '🟥'
         }
 
-    def create_data_embed(self, data: list[dict], title:str, current_page:int, starting_index:int, items_per_page: int):
-        embed = discord.Embed(title=title, color=discord.Colour.random(), description=f'Page {current_page}')
+        self.embed_color = {
+            'Default': discord.Colour.blue(),
+            'Topic': discord.Colour.orange()
+        }
+
+    def create_data_embed(self, data: list[dict], title:str, current_page:int, starting_index:int, items_per_page: int, embed_type: str = "Default"):
+        embed = discord.Embed(title=title, color=self.embed_color[embed_type], description=f'Page {current_page}')
         ending_index = starting_index + items_per_page
         if ending_index >= len(data):
             ending_index = len(data)

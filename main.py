@@ -24,8 +24,7 @@ def main() -> None:
         try:        
             data = google_sheets.get_all_data()
         except Exception as error:
-            print(error)
-            return await interaction.response.send_message('Unable to receive spreadsheet data. ❌', ephemeral=True, delete_after=30)
+            return await interaction.response.send_message(error, ephemeral=True, delete_after=30)
 
         await interaction.response.send_message('Displaying data. ✅', ephemeral=True, delete_after=5)
         
@@ -44,7 +43,7 @@ def main() -> None:
     
     @client.tree.command(description="Filter data by topic")
     @app_commands.describe(topic="Problem topic")
-    async def gettopic(interaction: discord.Interaction, topic: Literal['Arrays', '2-Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D-DP', '2D-DP', 'Bit Manipulation', 'Math']):
+    async def get_topic(interaction: discord.Interaction, topic: Literal['Arrays', '2-Pointer', 'Stack', 'Binary Search', 'Sliding Window', 'Linked List', 'Trees', 'Tries', 'Heap', 'Intervals', 'Greedy', 'Backtracking', 'Graphs', '1D-DP', '2D-DP', 'Bit Manipulation', 'Math']):
         if TopicView.is_active:
             try:
                 found_message = await interaction.channel.fetch_message(TopicView.message_id)
@@ -56,8 +55,7 @@ def main() -> None:
         try:        
             data = google_sheets.filter_by_topic(topic)
         except Exception as error:
-            print(error)
-            return await interaction.response.send_message('Unable to receive spreadsheet data. ❌', ephemeral=True, delete_after=30)
+            return await interaction.response.send_message(error, ephemeral=True, delete_after=30)
 
         if not data:
             return await interaction.response.send_message('There are no entries with this topic. ⚠️' , ephemeral=True, delete_after=15)
@@ -66,7 +64,7 @@ def main() -> None:
         
         current_page, current_index, items_per_page = 1, 0, 5
         displayView = TopicView(google_sheets, embed_factory, data, topic, current_page, current_index, items_per_page)
-        embed = embed_factory.create_data_embed(data, topic, current_page, current_index, items_per_page)
+        embed = embed_factory.create_data_embed(data, topic, current_page, current_index, items_per_page, "Topic")
         displayedMessage = await interaction.channel.send(embed=embed, view=displayView)
         TopicView.is_active = True
         TopicView.message_id = displayedMessage.id
@@ -78,12 +76,12 @@ def main() -> None:
             await displayedMessage.delete()
 
     @client.tree.command(description="Create new entry")
-    async def createentry(interaction: discord.Interaction):
+    async def create_entry(interaction: discord.Interaction):
         await interaction.response.send_modal(CreateEntry(title="New Leetcode Entry", google_sheets=google_sheets))
 
     @client.tree.command(description="Update entry")
     @app_commands.describe(number="Problem number")
-    async def updateentry(interaction: discord.Interaction, number: int):
+    async def update_entry(interaction: discord.Interaction, number: int):
         try:
             row_information = google_sheets.get_entry(number)
         except Exception as error:
@@ -109,7 +107,7 @@ def main() -> None:
     
     @client.tree.command(description="Delete entry")
     @app_commands.describe(number="Problem number")
-    async def deleteentry(interaction: discord.Interaction, number: int):
+    async def delete_entry(interaction: discord.Interaction, number: int):
         try:
             google_sheets.delete_entry(number)
         except Exception as error:
@@ -117,7 +115,7 @@ def main() -> None:
 
         await interaction.response.send_message(f'Problem #{number} has been deleted. ✅', ephemeral=True, delete_after=15)
 
-    @client.tree.command(description="Help command => Displays all available commands.")
+    @client.tree.command(description="Displays all available commands.")
     async def help(interaction: discord.Interaction):
         embed = embed_factory.create_help_embed(discord_config.get_commands_info())
         return await interaction.response.send_message(embed=embed, ephemeral=True)

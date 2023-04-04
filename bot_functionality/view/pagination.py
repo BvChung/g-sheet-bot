@@ -4,11 +4,12 @@ from ..embeds import Embeds
 from ..sheet import Sheet
 
 class PaginatedView(discord.ui.View, ABC):
-    def __init__(self, google_sheets: Sheet, embed_factory: Embeds, data: list[dict], title:str, current_page: int, current_index:int, items_per_page: int):
+    def __init__(self, google_sheets: Sheet, embed_factory: Embeds, data: list[dict], title: str, view_type: str, current_page: int, current_index:int, items_per_page: int):
         super().__init__(timeout=None)
         self._google_sheets = google_sheets
         self._embed_factory = embed_factory
         self._data = data
+        self.view_type = view_type
         self.title = title
         self.current_page = current_page
         self.current_index = current_index
@@ -61,7 +62,7 @@ class PaginatedView(discord.ui.View, ABC):
         pass
 
     async def _update_view(self, interaction: discord.Interaction):
-        embed = self._embed_factory.create_data_embed(self._data, self.title, self.current_page, self.current_index, self.items_per_page)
+        embed = self._embed_factory.create_data_embed(self._data, self.title, self.current_page, self.current_index, self.items_per_page, self.view_type)
         self._updateBtns()
         await interaction.response.edit_message(embed=embed, view=self)
 
