@@ -7,7 +7,7 @@ LeetBot is a leetcode personal problem and solution tracker discord bot integrat
 ## Table of Contents
 
 - [Tech](#tech)<br/>
-- [Setting Up](#setting up)<br/>
+- [Setting Up](#setting-up)<br/>
 - [Development](#development)<br/>
 - [Demos](#demo-gifs)<br/>
 
@@ -15,7 +15,7 @@ LeetBot is a leetcode personal problem and solution tracker discord bot integrat
 
 - [Python](https://www.python.org/)
 
-# Setting Up
+## Setting Up Google Sheets API and Gspread
 
 ## Development
 
