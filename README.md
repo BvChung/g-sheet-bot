@@ -2,7 +2,7 @@
 
 ## Overview
 
-LeetBot is a leetcode personal problem and solution tracker discord bot integrated with Google Sheets using Google Sheets API and Gspread Python API.
+LeetBot is a personal leetcode problem and solution tracker discord bot integrated with Google Sheets using Google Sheets API and Gspread Python API.
 
 ## Table of Contents
 
