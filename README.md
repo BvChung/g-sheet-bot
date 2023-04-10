@@ -31,7 +31,9 @@ LeetBot is a personal leetcode problem and solution tracker discord bot integrat
 pip install -r requirements.txt
 ```
 
-2. Create .env
+2. Include JSON file from Google Sheets API in root file directory
+
+3. Create .env
 
 ```
 Discord Information
