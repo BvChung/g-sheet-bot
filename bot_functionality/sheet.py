@@ -3,8 +3,8 @@ import gspread
 class Sheet:
     instance = None
     
-    def __init__(self, credentials: dict, sheet_name: str, starting_column: str, ending_column: str) -> None:
-        self.__leetcode_sheet = gspread.service_account_from_dict(credentials).open(sheet_name).sheet1
+    def __init__(self, credentials: str, sheet_name: str, starting_column: str, ending_column: str) -> None:
+        self.__leetcode_sheet = gspread.service_account(credentials).open(sheet_name).sheet1
         self.__cached_data: list[dict] = []
         self.__cached_topic_data: list[dict] = []
         self.starting_column = starting_column

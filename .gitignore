@@ -1,5 +1,5 @@
 .env
 bot-env
-secret.json
+credentials.json
 *.py[cod]
 __pycache__/
