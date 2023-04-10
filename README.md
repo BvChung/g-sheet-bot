@@ -15,7 +15,13 @@ LeetBot is a personal leetcode problem and solution tracker discord bot integrat
 
 - [Python](https://www.python.org/)
 
-## Setting Up Google Sheets API and Gspread
+## Setting Up
+
+1. Create project on [Google Cloud](https://console.cloud.google.com)
+2. Go to API's & Services and enable Google Sheets API + Google Drive API
+3. Go to Google Sheets API and create a service account -> Keys tab -> Add Key -> Create Key -> Export as JSON
+4. Go to your Google Sheets spreadsheet
+5. Share with "client_email" in the JSON file
 
 ## Development
 
@@ -25,18 +31,35 @@ LeetBot is a personal leetcode problem and solution tracker discord bot integrat
 pip install -r requirements.txt
 ```
 
+2. Create .env
+
+```
+Discord Information
+TOKEN = 
+MY_GUILD = 
+
+Google Sheets Information
+CREDENTIALS_JSON = JSON name
+SHEET_NAME = 
+```
+
 ## Demo GIFs
+**Viewing**
+
+![All](https://github.com/BvChung/leetbot/blob/main/botdemogifs/viewall.gif)
+
+![Topics](https://github.com/BvChung/leetbot/blob/main/botdemogifs/viewtopic.gif)
 
 **Creating**
 
 ![Creation](https://github.com/BvChung/leetbot/blob/main/botdemogifs/creating.gif)
 
+**Updating**
+
+![Update](https://github.com/BvChung/leetbot/blob/main/botdemogifs/update.gif)
+
 **Deleting**
 
 ![Deletion](https://github.com/BvChung/leetbot/blob/main/botdemogifs/deleting.gif)
 
-**Viewing**
 
-![All](https://github.com/BvChung/leetbot/blob/main/botdemogifs/alldata.gif)
-
-![Topics](https://github.com/BvChung/leetbot/blob/main/botdemogifs/topics.gif)
