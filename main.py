@@ -4,6 +4,8 @@ from typing import Literal
 from config import *
 from bot_functionality import *
 
+# main
+
 
 def main() -> None:
     discord_config = DiscordConfig()
