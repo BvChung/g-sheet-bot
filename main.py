@@ -4,7 +4,7 @@ from typing import Literal
 from config import *
 from bot_functionality import *
 
-def main() -> None:
+def main():
     discord_config = DiscordConfig()
     google_sheets_config = GoogleSheetsConfig()
     client = MyClient(discord_config.get_guild_id())
