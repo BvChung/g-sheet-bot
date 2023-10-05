@@ -57,6 +57,12 @@ class Sheet:
         self.__fetch()
         return self.__filter(topic)
     
+    def get_entry(self, problem_number: int):
+        cell = self.__find(str(problem_number))
+
+        row_number: int = cell.row
+        return [row_number, self.__leetcode_sheet.row_values(cell.row)]
+    
     def create_entry(self, entries: list) -> None:
         try:
             self.__leetcode_sheet.insert_row(entries, 2)
@@ -64,12 +70,6 @@ class Sheet:
         except Exception as error:
             raise Exception(f'Unable to create new entry.\n{error}')
     
-    def get_entry(self, problem_number: int):
-        cell = self.__find(str(problem_number))
-
-        row_number: int = cell.row
-        return [row_number, self.__leetcode_sheet.row_values(cell.row)]
-        
     def update_entry(self, row_number: int, updated_data: list) -> None:
         cell_range = f'{self.starting_column}{str(row_number)}:{self.ending_column}{str(row_number)}' 
         try:
@@ -86,3 +86,10 @@ class Sheet:
         except Exception as error:
             print(error)
             raise Exception(f'Could not delete entry.\n{error}')
+    
+    def delete_all_entries(self) -> None:
+        try:
+            self.__leetcode_sheet.clear()
+        except Exception as error:
+            print(error)
+            raise Exception(f'Could not delete all data.\n{error}')

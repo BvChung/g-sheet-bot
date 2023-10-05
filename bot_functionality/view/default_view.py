@@ -1,4 +1,3 @@
-import sys
 from ..embeds import Embeds
 from .pagination import PaginatedView
 from ..sheet import Sheet
