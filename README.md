@@ -1,8 +1,8 @@
-# Leetbot
+# AutomateBot
 
 ## Overview
 
-LeetBot is a personal leetcode problem and solution tracker discord bot integrated with Google Sheets using Google Sheets API and Gspread Python API.
+Automate uploading information to Google Sheets using Google Sheets API and Gspread Python API.
 
 ## Table of Contents
 
@@ -44,24 +44,3 @@ Google Sheets Information
 CREDENTIALS_JSON = JSON name
 SHEET_NAME = 
 ```
-
-## Demo GIFs
-**Viewing**
-
-![All](https://github.com/BvChung/leetbot/blob/main/botdemogifs/viewall.gif)
-
-![Topics](https://github.com/BvChung/leetbot/blob/main/botdemogifs/viewtopic.gif)
-
-**Creating**
-
-![Creation](https://github.com/BvChung/leetbot/blob/main/botdemogifs/creating.gif)
-
-**Updating**
-
-![Update](https://github.com/BvChung/leetbot/blob/main/botdemogifs/update.gif)
-
-**Deleting**
-
-![Deletion](https://github.com/BvChung/leetbot/blob/main/botdemogifs/deleting.gif)
-
-
