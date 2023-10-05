@@ -67,16 +67,17 @@ class PaginatedView(discord.ui.View, ABC):
         await interaction.response.edit_message(embed=embed, view=self)
 
     def _updateBtns(self):
-        if self.current_page == 1 and self.current_index + self.items_per_page >= len(self._data):
-            self.previous_page_button.disabled = True
-            self.to_first_page_button.disabled = True
-            self.next_page_button.disabled = True
-            self.to_last_page_button.disabled = True
-        elif self.current_page == 1:
-            self.previous_page_button.disabled = True
-            self.to_first_page_button.disabled = True
-            self.next_page_button.disabled = False
-            self.to_last_page_button.disabled = False
+        if self.current_page == 1:
+            if self.current_index + self.items_per_page >= len(self._data):
+                self.previous_page_button.disabled = True
+                self.to_first_page_button.disabled = True
+                self.next_page_button.disabled = True
+                self.to_last_page_button.disabled = True
+            else:
+                self.previous_page_button.disabled = True
+                self.to_first_page_button.disabled = True
+                self.next_page_button.disabled = False
+                self.to_last_page_button.disabled = False
         elif self.current_index + self.items_per_page >= len(self._data):
             self.next_page_button.disabled = True
             self.to_last_page_button.disabled = True

@@ -2,15 +2,9 @@ import discord
 
 class Embeds:
     def __init__(self) -> None:
-        self.difficulty_color = {
-            'Easy': '🟩',
-            'Medium': '🟨',
-            'Hard': '🟥'
-        }
-
         self.embed_color = {
-            'Default': discord.Colour.lighter_grey(),
-            'Topic': discord.Colour.blue(),
+            'Default': discord.Colour.blurple(),
+            'Topic': discord.Colour.blurple(),
             'Help': discord.Colour.red()
         }
 
@@ -21,18 +15,13 @@ class Embeds:
             ending_index = len(data)
         
         for i in range(starting_index, ending_index):
-            problem = '__' + str(data[i]['Number']) + '. ' + str(data[i]['Name']) + '__'
-
-            if (str(data[i]['Review']) == 'Yes'):
-                problem = ':bookmark:  ' + problem
+            problem = str(data[i]['Number']) + '. ' + str(data[i]['Name'])
             
-            difficulty = self.difficulty_color[data[i]['Difficulty']] + '  **' + str(data[i]['Topic']) + '** '
+            link = '**Link:** ' + str(data[i]['Link']) 
 
-            link = ':link:  **Link:** ' + str(data[i]['Link']) 
+            solution = '> ' + str(data[i]['Solution'])
 
-            solution = '```' + str(data[i]['Solution']) + '```'
-
-            output = f'{difficulty}\n{link}\n{solution}'
+            output = f'{link}\n{solution}\n'
             embed.add_field(name=problem, value=output, inline=False)
 
         return embed
