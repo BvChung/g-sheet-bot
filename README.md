@@ -9,7 +9,6 @@ Automate uploading information to Google Sheets using Google Sheets API and Gspr
 - [Tech](#tech)<br/>
 - [Setting Up](#setting-up)<br/>
 - [Development](#development)<br/>
-- [Demos](#demo-gifs)<br/>
 
 ## Tech
 
