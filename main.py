@@ -5,7 +5,7 @@ from config import *
 from bot_functionality import *
 
 
-def main():
+def main() -> None:
     discord_config = DiscordConfig()
     google_sheets_config = GoogleSheetsConfig()
     client = MyClient(discord_config.get_guild_id())
