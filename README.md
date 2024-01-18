@@ -19,8 +19,7 @@ Automate uploading information to Google Sheets using Google Sheets API and Gspr
 1. Create project on [Google Cloud](https://console.cloud.google.com)
 2. Go to API's & Services and enable Google Sheets API + Google Drive API
 3. Go to Google Sheets API and create a service account -> Keys tab -> Add Key -> Create Key -> Export as JSON
-4. Go to your Google Sheets spreadsheet
-5. Share with "client_email" in the JSON file
+4. Go to your Google Sheets spreadsheet and Share with the "client_email" in the JSON file
 
 ## Development
 
@@ -30,16 +29,26 @@ Automate uploading information to Google Sheets using Google Sheets API and Gspr
 pip install -r requirements.txt
 ```
 
-2. Include JSON file from Google Sheets API in root file directory
+2. Can either use JSON file with Google Sheets API or create a .env file with the information
 
-3. Create .env
+3. Example .env
 
 ```
 Discord Information
-TOKEN = 
-MY_GUILD = 
+TOKEN =
+MY_GUILD =
 
 Google Sheets Information
-CREDENTIALS_JSON = JSON name
-SHEET_NAME = 
+CREDENTIALS_JSON =
+SHEET_NAME =
+TYPE =
+PROJECT_ID =
+PRIVATE_KEY_ID =
+PRIVATE_KEY =
+CLIENT_EMAIL =
+CLIENT_ID =
+AUTH_URI =
+TOKEN_URI =
+AUTH_PROVIDER_X509_CERT_URL =
+CLIENT_X509_CERT_URL =
 ```

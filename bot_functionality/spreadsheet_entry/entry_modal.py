@@ -1,11 +1,13 @@
 import discord
 from ..sheet import Sheet
 
-TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries", "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
+TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries",
+          "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
 REVIEW = ['Yes', 'No']
 DIFFICULTY = ['Easy', 'Medium', 'Hard']
 
-class LeetcodeEntry(discord.ui.Modal):
+
+class EntryModal(discord.ui.Modal):
     problem_info = discord.ui.TextInput(
         style=discord.TextStyle.short,
         label="Number, Name, Difficulty (Format=#;Name;Diff)",
@@ -45,7 +47,7 @@ class LeetcodeEntry(discord.ui.Modal):
     def __init__(self, *, title: str, google_sheets: Sheet) -> None:
         super().__init__(title=title)
         self.google_sheets = google_sheets
-    
+
     def _validate_inputs(self) -> list:
         number = None
         name = None
@@ -53,15 +55,16 @@ class LeetcodeEntry(discord.ui.Modal):
         try:
             number, name, difficulty = str(self.problem_info).split(';')
         except:
-            raise Exception('Invalid number + name + difficulty input. ⚠️\nFormat = #;Name;Difficulty')
-        
+            raise Exception(
+                'Invalid number + name + difficulty input. ⚠️\nFormat = #;Name;Difficulty')
+
         if not name or not number or not difficulty:
             raise Exception('Number, name or difficulty can not be blank.')
-        
+
         difficulty.capitalize()
         if difficulty not in DIFFICULTY:
             raise Exception('Invalid difficulty input. ⚠️')
-        
+
         if str(self.topic) not in TOPICS:
             raise Exception('Invalid topic input. ⚠️\nOptions: Arrays, 2-Pointer, Stack, Binary Search, Sliding Window, Linked List, Trees, Tries, Heap, Intervals, Greedy, Backtracking, Graphs, 1D-DP, 2D-DP, Bit Manipulation, Math')
 

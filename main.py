@@ -1,5 +1,5 @@
-import os
 import discord
+import numpy as np
 from discord import app_commands
 from typing import Literal
 from config import *
@@ -9,9 +9,13 @@ from bot_functionality import *
 def main():
     discord_config = DiscordConfig()
     google_sheets_config = GoogleSheetsConfig()
-    client = MyClient(discord_config.get_guild_id())
-    google_sheets: Sheet = Sheet.get_state(google_sheets_config.get_credentials(
-    ), google_sheets_config.get_sheet_name(), starting_column='A', ending_column='G')
+    guild_id = discord_config.get_guild_id()
+    credentials = google_sheets_config.get_credentials()
+    active_sheet_name = google_sheets_config.get_sheet_name()
+
+    client = DiscordClient(guild_id=guild_id)
+    google_sheets = Sheet.get_state(
+        credentials=credentials, sheet_name=active_sheet_name, starting_column='A', ending_column='G')
     embed_factory = Embeds()
 
     @client.tree.command(description="Get all data")
@@ -128,6 +132,17 @@ def main():
         embed = embed_factory.create_help_embed(
             discord_config.get_commands_info())
         return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @client.tree.command(description="Get mean.")
+    @app_commands.describe(numbers="List of numbers")
+    async def mean(interaction: discord.Interaction, numbers: str):
+        try:
+            numbers_list = np.array(list(map(int, numbers.split(' '))))
+            res = numbers_list.mean()
+        except Exception as error:
+            return await interaction.response.send_message(error, ephemeral=True, delete_after=15)
+
+        await interaction.response.send_message(f'Mean: {res}', ephemeral=True, delete_after=15)
 
     client.run(discord_config.get_token())
 
