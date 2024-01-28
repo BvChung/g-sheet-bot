@@ -1,4 +1,4 @@
-# AutomateBot
+# GSheets Bot
 
 ## Overview
 

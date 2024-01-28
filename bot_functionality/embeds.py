@@ -9,6 +9,13 @@ class Embeds:
             'Help': discord.Colour.red()
         }
 
+    def stats_embed(self, stats: str, title: str, name: str):
+        embed = discord.Embed(title=title,
+                              color=self.embed_color['Default'])
+        embed.add_field(name=name, value=stats, inline=False)
+
+        return embed
+
     def create_data_embed(self, data: list[dict], title: str, current_page: int, starting_index: int, items_per_page: int, embed_type: str = "Default"):
         embed = discord.Embed(
             title=title, color=self.embed_color[embed_type], description=f'__**Page {current_page}**__')
