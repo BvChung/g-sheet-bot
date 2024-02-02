@@ -49,11 +49,31 @@ def sync_commands(discord_client: Client, gsheet_client: GSheetInstance, supabas
     @app_commands.describe(gid_key="GID key located in the web url after gid=")
     async def change_spreadsheet_gid(interaction: discord.Interaction, gid_key: int):
         try:
-            gsheet_client.set_worksheet_gid(gid_key)
+            gsheet_client.get_all_rows()
         except Exception as error:
             message = f'Unable to change different child spreadsheet. ⚠️\n{error}'
             return await interaction.response.send_message(message, ephemeral=True, delete_after=15)
 
         child_spreadsheet_name = gsheet_client.get_child_spreadsheet_name()
         await interaction.response.send_message(f'Changed to spreadsheet tab: {child_spreadsheet_name}. ✅')
+
+    @discord_client.tree.command(description="Add coins to attending members in database.")
+    @app_commands.describe(event_id="Event ID")
+    async def add_coins_to_members(interaction: discord.Interaction, event_id: int):
+        try:
+            data = gsheet_client.get_all_records()
+        except Exception as error:
+            message = f'Unable to fetch spreadsheet data. ⚠️\n{error}'
+            return await interaction.response.send_message(message, ephemeral=True, delete_after=15)
+
+        unique_sheet_id = gsheet_client.get_id_identifier()
+        try:
+            supabase_client.update_member_attendees_db(
+                data, event_id, unique_sheet_id)
+        except Exception as error:
+            message = f'Unable to update database. ⚠️\n{error}'
+            return await interaction.response.send_message(message, ephemeral=True, delete_after=15)
+
+        await interaction.response.send_message(f'Added coins to members in database. ✅')
+
     return discord_client

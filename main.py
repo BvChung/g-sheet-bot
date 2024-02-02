@@ -10,12 +10,11 @@ def main():
     supabase_config = SupabaseConfig()
     discord_config = DiscordConfig()
 
-    supabase_instance = SupabaseInstance(
+    supabase_client = SupabaseInstance(
         api_url=supabase_config.get_api_url(), supabase_key=supabase_config.get_key())
 
     gsheet_client = GSheetInstance(
         credentials_filename=gsheet_config.get_credentials_filename(), spreadsheet_key=gsheet_config.get_spreadsheet_key())
-    supabase_client = supabase_instance.get_instance()
 
     discord_client = DiscordClient(guild_id=discord_config.get_guild_id())
     embed_factory = Embeds()

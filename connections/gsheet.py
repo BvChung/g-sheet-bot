@@ -46,8 +46,11 @@ class GSheetInstance:
             self.__spreadsheet_key).get_worksheet_by_id(self.worksheet_gid)
 
     def get_all_rows(self) -> list:
-
         return self.__active_worksheet.get_values(
+            value_render_option=ValueRenderOption.unformatted)
+
+    def get_all_records(self) -> list[dict]:
+        return self.__active_worksheet.get_all_records(
             value_render_option=ValueRenderOption.unformatted)
 
     def get_all_sheets(self) -> list[Worksheet]:

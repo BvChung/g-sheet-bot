@@ -1,11 +1,6 @@
 import discord
 from ..sheet import Sheet
 
-TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries",
-          "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
-REVIEW = ['Yes', 'No']
-DIFFICULTY = ['Easy', 'Medium', 'Hard']
-
 
 class EntryModal(discord.ui.Modal):
     problem_info = discord.ui.TextInput(
@@ -47,6 +42,10 @@ class EntryModal(discord.ui.Modal):
     def __init__(self, *, title: str, google_sheets: Sheet) -> None:
         super().__init__(title=title)
         self.google_sheets = google_sheets
+        self.TOPICS = ["Arrays", "2-Pointer", "Stack", "Binary Search", "Sliding Window", "Linked List", "Trees", "Tries",
+                       "Heap", "Intervals", "Greedy", "Backtracking", "Graphs", "1D-DP", "2D-DP", "Bit Manipulation", "Math"]
+        self.REVIEW = ['Yes', 'No']
+        self.DIFFICULTY = ['Easy', 'Medium', 'Hard']
 
     def _validate_inputs(self) -> list:
         number = None
@@ -62,13 +61,13 @@ class EntryModal(discord.ui.Modal):
             raise Exception('Number, name or difficulty can not be blank.')
 
         difficulty.capitalize()
-        if difficulty not in DIFFICULTY:
+        if difficulty not in self.DIFFICULTY:
             raise Exception('Invalid difficulty input. ⚠️')
 
-        if str(self.topic) not in TOPICS:
+        if str(self.topic) not in self.TOPICS:
             raise Exception('Invalid topic input. ⚠️\nOptions: Arrays, 2-Pointer, Stack, Binary Search, Sliding Window, Linked List, Trees, Tries, Heap, Intervals, Greedy, Backtracking, Graphs, 1D-DP, 2D-DP, Bit Manipulation, Math')
 
-        if str(self.review).capitalize() not in REVIEW:
+        if str(self.review).capitalize() not in self.REVIEW:
             raise Exception('Invalid review input. ⚠️')
 
         return [number, name, difficulty]
