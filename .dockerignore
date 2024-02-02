@@ -1,0 +1,16 @@
+Dockerfile
+docker*.yml
+
+.git
+.gitignore
+.config
+
+.vscode
+.venv
+
+README.md
+*.py[cod]
+__pycache__/
+.vscode/settings.json
+temp
+s.py
